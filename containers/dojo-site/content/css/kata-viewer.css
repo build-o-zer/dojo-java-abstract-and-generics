@@ -331,3 +331,99 @@ body {
         font-size: 1em;
     }
 }
+
+/* Code Block Line Numbers - Prism Integration */
+.prism-line {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    white-space: pre;
+}
+
+.prism-line-number {
+    flex-shrink: 0;
+    width: 3.5em;
+    text-align: right;
+    padding-right: 0.75em;
+    padding-left: 0.5em;
+    color: #888;
+    background: rgba(0, 0, 0, 0.3);
+    border-right: 2px solid #444;
+    font-size: 0.85em;
+    line-height: inherit;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    font-weight: normal;
+}
+
+.prism-content {
+    flex: 1;
+    padding-left: 0.5em;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+/* Prism provides its own syntax highlighting styles */
+/* Override some Prism styles if needed */
+pre[class*="language-"] {
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+code[class*="language-"] {
+    background: transparent !important;
+}
+
+/* Ensure code blocks have proper setup for line numbers */
+pre {
+    position: relative;
+    overflow: hidden;
+}
+
+pre code {
+    display: block;
+    overflow-x: auto;
+    line-height: 1.5;
+    padding: 0;
+    background: transparent;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+/* Improve line number visibility on hover */
+.prism-line:hover .prism-line-number {
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    border-right-color: #ffd700;
+}
+
+/* Handle empty lines properly */
+.prism-line:empty {
+    min-height: 1.4em;
+}
+
+.prism-content:empty::before {
+    content: " ";
+    visibility: hidden;
+}
+
+/* Alternating line background for better readability */
+.prism-line:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Make sure the first line doesn't have extra margin */
+.prism-line:first-child {
+    margin-top: 0;
+}
+
+/* Improve selection behavior */
+.prism-line-number::selection {
+    background: transparent;
+}
+
+.prism-line-number::-moz-selection {
+    background: transparent;
+}
