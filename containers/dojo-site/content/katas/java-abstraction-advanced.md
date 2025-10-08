@@ -72,11 +72,203 @@ public class MonolithicDataProcessor {
 
 **Sensei:** "You have identified the symptoms of the monolithic disease. But within this chaos lies the wisdom to build something beautiful. We shall apply advanced abstraction patterns to separate these tangled concerns into elegant, reusable components."
 
+### The Monolithic Problem Visualization
+
+*Sensei sketches the current chaotic architecture:*
+
+```mermaid
+classDiagram
+    class MonolithicDataProcessor {
+        <<monolith>>
+        +String XML_NAMESPACE$
+        +processFileData(filename, format, validate, categoryFilter, aggregationType) void
+        -loadTextFile(filename) String
+        -validateJsonAgainstSchema(jsonObject) boolean
+        -validateXmlAgainstXsd(xmlContent) boolean
+        -parseCSV() List~CSVRecord~
+        -parseJSON() JSONObject
+        -parseXML() Document
+        -validateCSV() boolean
+        -validateJSON() boolean
+        -validateXML() boolean
+        -filterCSV() List~CSVRecord~
+        -filterJSON() List~JSONObject~
+        -filterXML() List~Element~
+        -aggregateCSV() Map
+        -aggregateJSON() Map
+        -aggregateXML() Map
+    }
+    
+    class ApacheCommonsCSV {
+        <<external-library>>
+        +CSVParser
+        +CSVRecord
+        +CSVFormat
+    }
+    
+    class OrgJSON {
+        <<external-library>>
+        +JSONObject
+        +JSONArray
+    }
+    
+    class EveritJSONSchema {
+        <<external-library>>
+        +Schema
+        +ValidationException
+    }
+    
+    class DOMParsing {
+        <<external-library>>
+        +DocumentBuilder
+        +Document
+        +Element
+    }
+    
+    class XSDValidation {
+        <<external-library>>
+        +SchemaFactory
+        +Validator
+    }
+    
+    MonolithicDataProcessor ..> ApacheCommonsCSV : uses
+    MonolithicDataProcessor ..> OrgJSON : uses
+    MonolithicDataProcessor ..> EveritJSONSchema : uses
+    MonolithicDataProcessor ..> DOMParsing : uses
+    MonolithicDataProcessor ..> XSDValidation : uses
+    
+    note for MonolithicDataProcessor "🔥 PROBLEMS:\n• 450+ lines of mixed concerns\n• Three different parsing technologies\n• Duplicate validation patterns\n• Inconsistent error handling\n• Impossible to test in isolation\n• Resource management issues\n• Tightly coupled to specific libraries"
+    
+    note for ApacheCommonsCSV "🔴 CSV Processing\n• Temporary List~CSVRecord~\n• Custom validation logic\n• Manual field extraction"
+    
+    note for OrgJSON "🔴 JSON Processing\n• Schema validation with Everit\n• Temporary List~JSONObject~\n• Different error handling"
+    
+    note for DOMParsing "🔴 XML Processing\n• XSD validation\n• XXE security handling\n• Temporary List~Element~\n• Namespace management"
+```
+
+**Deshi:** "The diagram reveals the true scope of the problem! The monolith is not just large - it's a tangled web of dependencies and responsibilities."
+
+**Sensei:** "Indeed. Each format brings its own libraries, its own validation approach, its own temporary storage patterns. This is not architecture - this is archaeology! But from this ancient code, we shall build something elegant."
+
 ---
 
 ## The Practice (実践)
 
 **Sensei:** "We shall build a flexible pipeline using several abstraction patterns combined."
+
+### Target Architecture - Clean Abstraction Patterns
+
+*Sensei reveals the elegant solution architecture:*
+
+```mermaid
+classDiagram
+    class DataSource~T~ {
+        <<abstract>>
+        #String identifier
+        #Map~String, Object~ configuration
+        +DataSource(identifier)
+        +loadData()* List~T~
+        +isHealthy()* boolean
+        +configure(key, value) void
+        #logLoad(recordCount) void
+        #getSourceType()* String
+    }
+    
+    class DataTransformer~TInput, TOutput~ {
+        <<abstract>>
+        #String name
+        #boolean enabled
+        +DataTransformer(name)
+        +transform(data) List~TOutput~ ⭐final
+        #performTransformation(data)* List~TOutput~
+        #getTransformationType()* String
+        -logStart(inputSize) void
+        -logComplete(outputSize, duration) void
+        +setEnabled(enabled) void
+    }
+    
+    class ProcessingPipeline~TInput, TOutput~ {
+        <<abstract>>
+        #List~DataTransformer~ transformers
+        #DataSource~TInput~ dataSource
+        #String pipelineName
+        +ProcessingPipeline(pipelineName, dataSource)
+        +execute() List~TOutput~ ⭐final
+        #processData(rawData)* List~TOutput~
+        #handleError(exception)* void
+        #cleanup()* void
+        #addTransformer(transformer) void
+    }
+    
+    class CSVDataSource {
+        -CSVFormat csvFormat
+        +loadData() List~CSVRecord~
+        +isHealthy() boolean
+        #getSourceType() String
+    }
+    
+    class JSONDataSource {
+        -JSONObject rootObject
+        +loadData() List~JSONObject~
+        +isHealthy() boolean
+        #getSourceType() String
+    }
+    
+    class XMLDataSource {
+        -DocumentBuilder builder
+        +loadData() List~Element~
+        +isHealthy() boolean
+        #getSourceType() String
+    }
+    
+    class ValidationTransformer~T~ {
+        -Schema validationSchema
+        #performTransformation(data) List~T~
+        #getTransformationType() String
+    }
+    
+    class FilterTransformer~T~ {
+        -Predicate~T~ filterCriteria
+        #performTransformation(data) List~T~
+        #getTransformationType() String
+    }
+    
+    class AggregationTransformer~T~ {
+        -AggregationType type
+        #performTransformation(data) List~T~
+        #getTransformationType() String
+    }
+    
+    class DataProcessingPipeline {
+        +DataProcessingPipeline(name, dataSource)
+        #processData(rawData) List~ProcessedRecord~
+        #handleError(exception) void
+        #cleanup() void
+    }
+    
+    DataSource~T~ <|-- CSVDataSource : extends
+    DataSource~T~ <|-- JSONDataSource : extends
+    DataSource~T~ <|-- XMLDataSource : extends
+    
+    DataTransformer~TInput, TOutput~ <|-- ValidationTransformer~T~ : extends
+    DataTransformer~TInput, TOutput~ <|-- FilterTransformer~T~ : extends
+    DataTransformer~TInput, TOutput~ <|-- AggregationTransformer~T~ : extends
+    
+    ProcessingPipeline~TInput, TOutput~ <|-- DataProcessingPipeline : extends
+    
+    ProcessingPipeline~TInput, TOutput~ o-- DataSource~T~ : uses
+    ProcessingPipeline~TInput, TOutput~ o-- DataTransformer~TInput, TOutput~ : uses
+    
+    note for DataSource~T~ "🟢 BENEFITS:\n• Generic type safety\n• Pluggable data sources\n• Consistent interface\n• Health monitoring\n• Configuration support"
+    
+    note for DataTransformer~TInput, TOutput~ "✨ TEMPLATE METHOD:\n• ⭐ Final workflow method\n• Built-in logging & timing\n• Enable/disable capability\n• Type-safe transformations\n• Single responsibility"
+    
+    note for ProcessingPipeline~TInput, TOutput~ "🚀 PIPELINE PATTERN:\n• ⭐ Final execution flow\n• Error handling strategy\n• Resource cleanup\n• Transformer composition\n• Exception safety"
+```
+
+**Deshi:** "Sensei! The transformation is remarkable! The monolithic chaos has become an elegant symphony of abstractions. Each class has a single, clear purpose."
+
+**Sensei:** "Observe how generics provide type safety without sacrificing flexibility. The `DataSource<T>` can work with any data type, while each concrete implementation specifies exactly what it produces. The Template Method pattern ensures consistent behavior across all transformers."
 
 ### Pattern 1: Abstract Data Source
 
@@ -199,6 +391,64 @@ public abstract class ProcessingPipeline<TInput, TOutput> {
 }
 ```
 
+### Pipeline Execution Flow
+
+*Sensei demonstrates the elegant workflow orchestration:*
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Pipeline as ProcessingPipeline
+    participant DataSource as DataSource~T~
+    participant Validator as ValidationTransformer
+    participant Filter as FilterTransformer
+    participant Aggregator as AggregationTransformer
+    
+    Client->>Pipeline: execute()
+    Note over Pipeline: === Starting Pipeline ===
+    
+    Pipeline->>DataSource: loadData()
+    DataSource-->>Pipeline: List~RawData~
+    Note over DataSource: Health check & logging
+    
+    Pipeline->>Pipeline: processData(rawData)
+    
+    loop For each transformer
+        Pipeline->>Validator: transform(data)
+        Note over Validator: Template Method Pattern
+        Validator->>Validator: logStart(size)
+        Validator->>Validator: performTransformation(data)
+        Note over Validator: Schema validation logic
+        Validator->>Validator: logComplete(size, duration)
+        Validator-->>Pipeline: List~ValidatedData~
+        
+        Pipeline->>Filter: transform(validatedData)
+        Filter->>Filter: logStart(size)
+        Filter->>Filter: performTransformation(data)
+        Note over Filter: Category/region filtering
+        Filter->>Filter: logComplete(size, duration)
+        Filter-->>Pipeline: List~FilteredData~
+        
+        Pipeline->>Aggregator: transform(filteredData)
+        Aggregator->>Aggregator: logStart(size)
+        Aggregator->>Aggregator: performTransformation(data)
+        Note over Aggregator: SUM/COUNT aggregation
+        Aggregator->>Aggregator: logComplete(size, duration)
+        Aggregator-->>Pipeline: List~AggregatedData~
+    end
+    
+    Pipeline->>Pipeline: cleanup()
+    Note over Pipeline: Resource cleanup
+    
+    Pipeline-->>Client: List~ProcessedResult~
+    
+    Note over Client, Aggregator: 🟢 Benefits:<br/>• Type safety throughout<br/>• Consistent logging<br/>• Error handling<br/>• Resource management<br/>• Pluggable components
+```
+
+**Deshi:** "The sequence diagram reveals the beauty of the Template Method pattern! Each transformer follows the same workflow, but implements its own specific logic."
+
+**Sensei:** "Yes, and notice how type safety flows through the entire pipeline. The generic parameters ensure that data transformations are validated at compile time, preventing runtime type errors that plagued the monolithic version."
+
 ---
 
 ## Common Pitfalls (落とし穴)
@@ -230,6 +480,83 @@ public abstract class ProcessingPipeline<TInput, TOutput> {
 ## The Challenge (挑戦)
 
 **Sensei:** "Now, ultimate deshi, demonstrate mastery by refactoring the `MonolithicDataProcessor` into a clean, abstracted architecture."
+
+### Transformation Overview - Before vs After
+
+*Sensei presents the complete transformation journey:*
+
+#### 🔥 BEFORE: Monolithic Chaos
+
+```mermaid
+graph TD
+    Monolith[MonolithicDataProcessor<br/>450+ lines of tangled logic]
+    
+    Monolith --> CSV_Code[CSV Processing<br/>- Apache Commons CSV<br/>- Manual validation<br/>- Temp List~CSVRecord~ storage]
+    Monolith --> JSON_Code[JSON Processing<br/>- org.json + Everit Schema<br/>- Different validation approach<br/>- Temp List~JSONObject~ storage]
+    Monolith --> XML_Code[XML Processing<br/>- DOM + XSD validation<br/>- XXE security handling<br/>- Temp List~Element~ storage]
+    
+    CSV_Code --> Problems[❌ CRITICAL PROBLEMS:<br/>• Massive code duplication<br/>• Mixed concerns everywhere<br/>• Impossible to test in isolation<br/>• Tight coupling to libraries<br/>• Memory waste with temp storage<br/>• Inconsistent error handling]
+    JSON_Code --> Problems
+    XML_Code --> Problems
+    
+    Problems --> Impact[💥 IMPACT:<br/>• Every change risks breaking everything<br/>• Adding new formats requires<br/>  modifying the core method<br/>• Bug fixes multiply across formats<br/>• Testing requires full integration<br/>• Performance degrades over time]
+    
+    style Monolith fill:#ff6b6b,stroke:#d63031,stroke-width:4px
+    style Problems fill:#ff7675,stroke:#d63031,stroke-width:2px
+    style Impact fill:#fd79a8,stroke:#e84393,stroke-width:2px
+    style CSV_Code fill:#fab1a0,stroke:#e17055
+    style JSON_Code fill:#fab1a0,stroke:#e17055
+    style XML_Code fill:#fab1a0,stroke:#e17055
+```
+
+#### ✨ AFTER: Clean Architecture with Abstraction Patterns
+
+```mermaid
+graph TD
+    Pipeline[ProcessingPipeline~TInput,TOutput~<br/>🎯 Template Method Pattern<br/>⭐ Orchestrates entire workflow]
+    
+    subgraph "🔌 Pluggable Data Sources"
+        CSV_DS[CSVDataSource<br/>📄 Apache Commons CSV<br/>✅ Health monitoring<br/>⚙️ Configurable format]
+        JSON_DS[JSONDataSource<br/>📋 org.json parsing<br/>✅ Schema validation<br/>⚙️ Flexible structure]
+        XML_DS[XMLDataSource<br/>📰 DOM + XSD validation<br/>✅ XXE protection<br/>⚙️ Namespace support]
+    end
+    
+    subgraph "🔄 Composable Transformers"
+        Validator[ValidationTransformer~T~<br/>🛡️ Schema-based validation<br/>📊 Built-in logging & timing<br/>🔧 Enable/disable capability]
+        Filter[FilterTransformer~T~<br/>🎯 Predicate-based filtering<br/>📊 Performance metrics<br/>🔧 Chainable operations]
+        Aggregator[AggregationTransformer~T~<br/>📈 SUM/COUNT/AVG operations<br/>📊 Group-by support<br/>🔧 Type-safe aggregation]
+    end
+    
+    Pipeline --> CSV_DS
+    Pipeline --> JSON_DS
+    Pipeline --> XML_DS
+    Pipeline --> Validator
+    Pipeline --> Filter
+    Pipeline --> Aggregator
+    
+    CSV_DS --> Benefits[✅ MAJOR BENEFITS:<br/>• Single Responsibility Principle<br/>• Compile-time type safety<br/>• Independent unit testing<br/>• Pluggable components<br/>• Efficient resource usage<br/>• Consistent error handling<br/>• Easy to extend & maintain]
+    JSON_DS --> Benefits
+    XML_DS --> Benefits
+    Validator --> Benefits
+    Filter --> Benefits
+    Aggregator --> Benefits
+    
+    Benefits --> NewCapabilities[🚀 NEW CAPABILITIES:<br/>• Add formats without touching core<br/>• Mix & match transformers<br/>• Pipeline reusability<br/>• Parallel processing ready<br/>• Configuration-driven workflows<br/>• Comprehensive error recovery]
+    
+    style Pipeline fill:#00b894,stroke:#00a085,stroke-width:4px
+    style Benefits fill:#55a3ff,stroke:#0984e3,stroke-width:2px
+    style NewCapabilities fill:#6c5ce7,stroke:#5f3dc4,stroke-width:2px
+    style CSV_DS fill:#a8e6cf,stroke:#00b894
+    style JSON_DS fill:#a8e6cf,stroke:#00b894
+    style XML_DS fill:#a8e6cf,stroke:#00b894
+    style Validator fill:#ffd3a5,stroke:#fdcb6e
+    style Filter fill:#ffd3a5,stroke:#fdcb6e
+    style Aggregator fill:#ffd3a5,stroke:#fdcb6e
+```
+
+**Deshi:** "The visual transformation is striking! The monolithic tangle becomes a clean, organized architecture where each component has a clear purpose."
+
+**Sensei:** "Indeed. Notice how the abstract patterns eliminate duplication while maintaining flexibility. Each data source focuses only on loading its specific format, each transformer does one thing well, and the pipeline orchestrates it all with consistent error handling and resource management."
 
 ### Current State Analysis
 
