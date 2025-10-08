@@ -16,6 +16,7 @@
     <surefire-plugin.version>3.5.4</surefire-plugin.version>
     <lombok.version>1.18.42</lombok.version>
     <commons-collections4.version>4.5.0</commons-collections4.version>
+    <commons-io.version>2.17.0</commons-io.version>
     <eclipse-collections.version>13.0.0</eclipse-collections.version>
     <junit.jupiter.version>5.11.3</junit.jupiter.version>
   </properties>
@@ -25,6 +26,31 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
       <version>${commons-collections4.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20250517</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.github.erosb</groupId>
+        <artifactId>everit-json-schema</artifactId>
+        <version>1.14.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-csv</artifactId>
+        <version>1.10.0</version>
     </dependency>
 
     <dependency>

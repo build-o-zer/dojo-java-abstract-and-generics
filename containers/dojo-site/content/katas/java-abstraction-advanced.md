@@ -1,58 +1,76 @@
-# Java Kata: Advanced Abstraction Patterns
+# Java Kata: Advanced Abstraction Patterns - Refactoring the Monolith
 
-**Subject:** Complex Abstraction Patterns and Design  
-**Goal:** Master advanced abstraction techniques and design patterns  
+**Subject:** Refactoring Monolithic Code using Advanced Abstraction Patterns  
+**Goal:** Transform a complex monolithic class into a clean, abstracted architecture  
 **Level:** Advanced  
-**Duration:** 35-45 minutes  
+**Duration:** 45-60 minutes  
 
 ---
 
 ## 道場での対話 (Dojo Dialogue)
 
-### Scene: The Architecture Garden
+### Scene: The Legacy Code Challenge
 
-*The deshi sits surrounded by UML diagrams and design documents, contemplating a complex system architecture. The sensei approaches with the serene confidence of a master architect.*
+*The deshi stares at a massive Java file on their screen, overwhelmed by its complexity. The sensei approaches, having witnessed this struggle countless times.*
 
-**Sensei:** "I observe deep contemplation in your expression, advanced deshi. What architectural challenge occupies your mind?"
+**Sensei:** "I see the weight of legacy code upon your shoulders, advanced deshi. What troubles you?"
 
-**Deshi:** "Sensei, I must design a data processing pipeline that can handle different data sources (files, databases, APIs) and apply various transformations (validation, filtering, aggregation). The complexity grows with each requirement, and I fear creating a tangled mess."
+**Deshi:** "Sensei, I have inherited this `MonolithicDataProcessor` class. It processes CSV, JSON, and XML data with validation, filtering, and aggregation. But it's over 400 lines of tangled logic! Every small change risks breaking something else, and adding new features is becoming impossible."
 
-**Sensei:** "Ah, you face the ultimate test of abstraction mastery. This requires not just abstract classes, but the wisdom to combine multiple patterns harmoniously. Let me guide you through the way of advanced abstraction."
+**Sensei:** "Ah, the classic monolith - where all concerns live as one. This is not code, but chaos. However, within this chaos lies an opportunity to practice the highest forms of abstraction mastery. Come, let me show you the path from monolith to mastery."
 
 ---
 
 ## The Teaching
 
-**Sensei:** "First, understand the complexity you face. A naive approach might look like this:"
+**Sensei:** "First, observe the monolithic beast you must tame. Look at the current `MonolithicDataProcessor`:"
 
 ```java
-// Anti-pattern: Everything mixed together
-public class DataProcessor {
+public class MonolithicDataProcessor {
+    static final String XML_NAMESPACE = "http://buildozers.org/dojo/data";
+    
     public void processFileData(String filename, String format, boolean validate, 
-                               boolean filter, String aggregationType) {
-        // 200+ lines of mixed concerns
+                               String categoryFilter, String aggregationType) {
+        // 450+ lines of deeply mixed concerns:
+        
         if (format.equals("CSV")) {
-            // CSV reading logic
+            // Apache Commons CSV parsing with temporary data structures
+            String csvData = loadTextFile(filename);
+            CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader().setSkipHeaderRecord(true).build();
+            CSVParser parser = CSVParser.parse(csvData, csvFormat);
+            List<CSVRecord> filteredRecords = new ArrayList<>();  // Temporary storage
+            // Validation, filtering with temp storage, aggregation all mixed in...
         } else if (format.equals("JSON")) {
-            // JSON reading logic
+            // org.json parsing with JSONObject, JSONArray, and Everit JSON Schema validation
+            JSONObject jsonObject = new JSONObject(jsonData);
+            if (validate) validateJsonAgainstSchema(jsonObject);  // JSON Schema validation
+            List<JSONObject> filteredJsonRecords = new ArrayList<>();  // Temporary storage
+            // More mixed validation, filtering, aggregation...
+        } else if (format.equals("XML")) {
+            // DOM parsing with XSD validation and temporary data structures
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            if (validate) validateXmlAgainstXsd(xmlData);  // XSD schema validation
+            List<Element> filteredXmlElements = new ArrayList<>();  // Temporary storage
+            // Even more tangled logic...
         }
         
-        if (validate) {
-            // Validation logic
-        }
-        
-        if (filter) {
-            // Filtering logic
-        }
-        
-        // ... more mixed logic
+        // Enhanced features now include:
+        // - Apache Commons IO for unified file loading (loadTextFile method)
+        // - JSON Schema validation using Everit library
+        // - XSD validation with security (XXE prevention)
+        // - Temporary data structures for filtered results before aggregation
+        // - Consistent namespace handling via XML_NAMESPACE constant
     }
+    
+    private String loadTextFile(String filename) throws IOException { /*...*/ }
+    private boolean validateJsonAgainstSchema(JSONObject jsonObject) { /*...*/ }
+    private boolean validateXmlAgainstXsd(String xmlContent) { /*...*/ }
 }
 ```
 
-**Deshi:** "Sensei, I can already see this becoming unmaintainable. Each new data source or transformation would require modifying this monolithic method."
+**Deshi:** "Sensei, this is exactly my problem! I count three different parsing libraries, duplicate validation logic, inconsistent error handling, and the method has grown to over 400 lines. How can I possibly add new features or formats?"
 
-**Sensei:** "Precisely! This is where advanced abstraction patterns come to our rescue. We shall use multiple layers of abstraction working in harmony."
+**Sensei:** "You have identified the symptoms of the monolithic disease. But within this chaos lies the wisdom to build something beautiful. We shall apply advanced abstraction patterns to separate these tangled concerns into elegant, reusable components."
 
 ---
 
@@ -211,15 +229,178 @@ public abstract class ProcessingPipeline<TInput, TOutput> {
 
 ## The Challenge (挑戦)
 
-**Sensei:** "Now, ultimate deshi, demonstrate mastery by building a complete data processing system:"
+**Sensei:** "Now, ultimate deshi, demonstrate mastery by refactoring the `MonolithicDataProcessor` into a clean, abstracted architecture."
 
-### Setup
+### Current State Analysis
 
-Build a system that can:
-1. Read data from multiple sources (CSV files, JSON APIs, Database)
-2. Apply multiple transformations (validation, filtering, aggregation)
-3. Handle errors gracefully
-4. Process data in a configurable pipeline
+The existing `MonolithicDataProcessor` class demonstrates multiple anti-patterns:
+
+```java
+// Current problems in MonolithicDataProcessor:
+public class MonolithicDataProcessor {
+    // 🔥 PROBLEMS IDENTIFIED:
+    
+    // 1. Mixed Data Parsing Technologies
+    - CSV: Apache Commons CSV (CSVParser, CSVRecord) with temporary List<CSVRecord>
+    - JSON: org.json library (JSONObject, JSONArray) + Everit JSON Schema validation with List<JSONObject>
+    - XML: DOM parsing with XSD validation + XXE security + List<Element> temporary storage
+    
+    // 2. Enhanced but Still Duplicate Logic Patterns
+    - Validation: CSV column checks, JSON Schema (Everit), XSD validation (secure)
+    - Filtering: Three different approaches with temporary data structures
+    - Aggregation: (SUM, COUNT) now operates on filtered temporary collections
+    - File Loading: Unified loadTextFile() method using Apache Commons IO
+    
+    // 3. Monolithic Method (450+ lines - even worse!)
+    - processFileData() handles EVERYTHING including temp storage management
+    - validateJsonAgainstSchema() and validateXmlAgainstXsd() helper methods embedded
+    - Impossible to test individual components in isolation
+    - Adding new formats requires modifying core method and adding more validation helpers
+    
+    // 4. Inconsistent Error Handling (now with more exception types)
+    - IOException, JSONException, SAXException, ValidationException all handled differently
+    - No unified error recovery strategy across different validation approaches
+    
+    // 5. Resource Management Issues (partially improved but still problematic)
+    - Temporary data structures created but not reusable across operations
+    - Memory inefficient: stores filtered results before aggregation
+    - Schema files loaded on every validation call
+    - No connection pooling for future database sources
+    
+    // 6. NEW ISSUES FROM ENHANCEMENTS:
+    - XML_NAMESPACE constant reduces duplication but shows more hardcoded dependencies
+    - Three different validation libraries (CSV validation, Everit JSON Schema, XSD)
+    - Temporary storage pattern repeated but not abstracted
+    - Security improvements (XXE prevention) embedded in monolithic validation method
+}
+```
+
+### Current Data Files
+
+The `MonolithicDataProcessor` works with three data files (located in `src/main/resources/org/buildozers/dojo/abstraction/advanced/`):
+
+**data.csv**: 10 records with id, value, region, category
+```csv
+id,value,region,category
+1,100,North,Electronics
+2,150,South,Clothing
+3,200,North,Electronics
+4,75,East,Books
+5,300,West,Electronics
+...
+```
+
+**data.json**: Same data in JSON format
+```json
+{
+  "data": [
+    {"id": 1, "value": 100, "region": "North", "category": "Electronics"},
+    {"id": 2, "value": 150, "region": "South", "category": "Clothing"},
+    ...
+  ]
+}
+```
+
+**data-schema.json**: JSON Schema (Draft 07) for validation using Everit library
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "minimum": 1},
+          "value": {"type": "integer", "minimum": 0},
+          "region": {"type": "string", "enum": ["North", "South", "East", "West"]},
+          "category": {"type": "string", "enum": ["Electronics", "Clothing", "Books"]}
+        },
+        "required": ["id", "value", "region", "category"]
+      }
+    }
+  },
+  "required": ["data"]
+}
+```
+
+**data.xml**: Same data with XSD validation support and namespace
+```xml
+<data:root xmlns:data="http://buildozers.org/dojo/data">
+  <data:record>
+    <data:id>1</data:id>
+    <data:value>100</data:value>
+    <data:region>North</data:region>
+    <data:category>Electronics</data:category>
+  </data:record>
+  ...
+</data:root>
+```
+
+**data.xsd**: XML Schema Definition for secure validation
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://buildozers.org/dojo/data"
+           xmlns:data="http://buildozers.org/dojo/data">
+  
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="record" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="id" type="xs:positiveInteger"/>
+              <xs:element name="value" type="xs:nonNegativeInteger"/>
+              <xs:element name="region" type="data:regionType"/>
+              <xs:element name="category" type="data:categoryType"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:simpleType name="regionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="North"/>
+      <xs:enumeration value="South"/>
+      <xs:enumeration value="East"/>
+      <xs:enumeration value="West"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="categoryType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Electronics"/>
+      <xs:enumeration value="Clothing"/>
+      <xs:enumeration value="Books"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+```
+
+### Your Mission
+
+Refactor this monolith into a clean architecture that can:
+
+1. **Support Current Features**: CSV, JSON, XML processing with validation, filtering, and aggregation
+2. **Enable Easy Extension**: Add new data formats without changing existing code
+3. **Separate Concerns**: Distinct components for parsing, validation, filtering, aggregation
+4. **Maintain Functionality**: All current test cases must continue to pass
+5. **Improve Maintainability**: Each component should be independently testable
+
+### Expected Behavior to Preserve
+
+- **Filtering with Temporary Storage**: Electronics (4 records), Clothing (3 records), Books (3 records)
+  - Current implementation uses temporary data structures (`List<CSVRecord>`, `List<JSONObject>`, `List<Element>`)
+  - Filtered results are stored before aggregation operations
+- **SUM Aggregation**: Electronics=820, Clothing=455, Books=250, All=1525
+- **COUNT Aggregation**: Electronics=4, Clothing=3, Books=3, All=10
+- **Validation**: CSV column validation, JSON Schema validation (Everit library), XML XSD validation (with XXE security)
+- **File Loading**: Unified loadTextFile() method using Apache Commons IO
+- **Security**: XML parsing with external entity prevention (XXE protection)
 
 <details>
 <summary><button>🎯 Solution from Sensei - Step 1: Data Sources</button></summary>
@@ -566,41 +747,91 @@ public class AdvancedDataProcessingTest {
 
 </details>
 
-### Expected Result
+### Current Monolithic Behavior (Before Refactoring)
+
+The existing `MonolithicDataProcessor` works but with poor architecture:
 
 ```text
-=== Starting Pipeline: Sales Analysis ===
-[CSV] Loaded 5 records from: sample_data.csv
-[VALIDATION] Starting transformation 'basic_validation' on 5 records
-[VALIDATION] Completed 'basic_validation' - Output: 5 records (2ms)
-[AGGREGATION] Starting transformation 'sum_by_region' on 5 records
-[AGGREGATION] Completed 'sum_by_region' - Output: 3 records (5ms)
-=== Pipeline 'Sales Analysis' completed ===
+=== Monolithic Data Processing ===
+Reading CSV file: data.csv
+Validating CSV data...
+Validation passed for 10 records
+Filtering CSV data (showing Electronics only)...
+Filtered: ID=1, Value=100, Region=North, Category=Electronics
+Filtered: ID=3, Value=200, Region=North, Category=Electronics
+Filtered: ID=5, Value=300, Region=West, Category=Electronics
+Filtered: ID=8, Value=220, Region=East, Category=Electronics
+Aggregating CSV data (sum of values)...
+Total sum: 820
+Processing complete!
+```
 
-Final Results:
-DataRecord{region=North, amount_sum=300}
-DataRecord{region=South, amount_sum=275}
-DataRecord{region=East, amount_sum=75}
+### Target Architecture (After Refactoring)
+
+Your refactored solution should provide the same functionality but with clean separation:
+
+```text
+=== Advanced Data Processing Pipeline ===
+[DataSource] CsvDataSource initialized: data.csv
+[Validator] SchemaValidator applied: 10 records validated
+[Filter] CategoryFilter applied: 4 records match 'Electronics'
+[Aggregator] SumAggregator applied: Total sum = 820
+[Pipeline] Processing completed successfully
+
+Results:
+- Format: CSV (Apache Commons CSV)
+- Records Processed: 4/10 (filtered)
+- Aggregation: SUM = 820
+- Processing Time: 15ms
 ```
 
 ---
 
 ## Reflection (反省)
 
-**Sensei:** "What mastery have you achieved today, advanced deshi?"
+**Sensei:** "What insights have you gained from confronting the monolithic beast, advanced deshi?"
 
-**Deshi:** "I have learned that true abstraction mastery lies not in using abstract classes alone, but in orchestrating multiple patterns to create flexible, maintainable architectures. Each abstraction layer serves a specific purpose, and together they create something greater than the sum of their parts."
+**Deshi:** "Sensei, I now understand that monolithic code is not evil by nature - it often starts as a simple solution. But as requirements grow, without proper abstraction patterns, it becomes a tangled web where every change threatens the whole system. The real skill lies in recognizing when to apply abstraction and which patterns serve each purpose."
 
-**Sensei:** "Excellently spoken! You have grasped the deepest wisdom: abstraction is not about hiding complexity, but about organizing it in a way that serves both present needs and future growth."
+**Sensei:** "Wisdom speaks through you! You have learned that refactoring is not just code cleanup - it is architectural surgery. Each abstraction layer must earn its place by solving a real problem: data source variations, transformation reusability, error handling consistency, or testing isolation."
 
-### Key Takeaways
+### Key Refactoring Insights
 
-- 🏗️ Complex systems benefit from multiple abstraction layers
-- 🔗 Combine Template Method, Strategy, and other patterns
-- 📦 Use generics with abstract classes for type safety
-- 🔄 Build composable, reusable components
-- 🎯 Separate concerns through well-defined abstractions
-- ⚡ Design for extensibility without over-engineering
+- 🏗️ **Monoliths grow naturally** - Simple solutions become complex over time
+- 🔍 **Identify patterns in chaos** - Look for repeated logic across different sections  
+- 📦 **Extract by responsibility** - Each class should have one clear purpose
+- 🔗 **Use interfaces for flexibility** - Abstract the varying parts (data sources, transformations)
+- 🎯 **Preserve behavior first** - Functionality must remain unchanged during refactoring
+- ⚡ **Refactor incrementally** - Small, safe steps prevent breaking changes
+- 🧪 **Enable testing isolation** - Each component should be independently testable
+
+### Before vs After Architecture
+
+**Before (Monolithic)**:
+```
+MonolithicDataProcessor
+├── 400+ lines of mixed logic
+├── CSV + JSON + XML parsing all in one method
+├── Validation scattered throughout
+├── Filtering duplicated per format
+├── Aggregation repeated everywhere
+└── Error handling inconsistent
+```
+
+**After (Abstracted)**:
+```
+DataProcessingPipeline
+├── DataSource<T> (Strategy Pattern)
+│   ├── CsvDataSource (Apache Commons CSV)
+│   ├── JsonDataSource (org.json)
+│   └── XmlDataSource (DOM + XSD)
+├── DataTransformer<T,R> (Template Method Pattern)
+│   ├── ValidationTransformer
+│   ├── FilterTransformer  
+│   └── AggregationTransformer
+└── ProcessingEngine (Facade Pattern)
+    └── Unified error handling & pipeline orchestration
+```
 
 ---
 

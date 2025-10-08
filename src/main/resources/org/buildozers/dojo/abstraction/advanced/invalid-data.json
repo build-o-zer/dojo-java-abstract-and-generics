@@ -1,0 +1,10 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "value": 100,
+      "region": "InvalidRegion",
+      "category": "Electronics"
+    }
+  ]
+}

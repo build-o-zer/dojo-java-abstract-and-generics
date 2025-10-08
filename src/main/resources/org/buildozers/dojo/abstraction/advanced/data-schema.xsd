@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://buildozers.org/dojo/data"
+           xmlns:tns="http://buildozers.org/dojo/data"
+           elementFormDefault="qualified">
+
+    <!-- Root element definition -->
+    <xs:element name="data" type="tns:DataType"/>
+
+    <!-- Complex type for the root data element -->
+    <xs:complexType name="DataType">
+        <xs:sequence>
+            <xs:element name="record" type="tns:RecordType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Complex type for individual record -->
+    <xs:complexType name="RecordType">
+        <xs:sequence>
+            <xs:element name="id" type="xs:positiveInteger"/>
+            <xs:element name="value" type="xs:nonNegativeInteger"/>
+            <xs:element name="region" type="tns:RegionType"/>
+            <xs:element name="category" type="tns:CategoryType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Enumeration for allowed regions -->
+    <xs:simpleType name="RegionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="North"/>
+            <xs:enumeration value="South"/>
+            <xs:enumeration value="East"/>
+            <xs:enumeration value="West"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Enumeration for allowed categories -->
+    <xs:simpleType name="CategoryType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Electronics"/>
+            <xs:enumeration value="Clothing"/>
+            <xs:enumeration value="Books"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

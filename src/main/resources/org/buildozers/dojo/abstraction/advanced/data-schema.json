@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Processing Schema",
+  "description": "Schema for validating data processing JSON files",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "description": "Array of data records",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "description": "Individual data record",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Unique record identifier"
+          },
+          "value": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Numeric value for aggregation"
+          },
+          "region": {
+            "type": "string",
+            "enum": ["North", "South", "East", "West"],
+            "description": "Geographic region"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["Electronics", "Clothing", "Books"],
+            "description": "Product category"
+          }
+        },
+        "required": ["id", "value", "region", "category"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["data"],
+  "additionalProperties": false
+}

@@ -83,6 +83,57 @@ public class PayPalPayment {
 
 **Sensei:** "Excellent observation! This is the perfect scenario for abstract class refactoring. Let me show you the transformation."
 
+### Legacy Code Structure - Before Refactoring
+
+*Sensei sketches the current problematic structure:*
+
+```mermaid
+classDiagram
+    class CreditCardPayment {
+        -String cardNumber
+        -double amount
+        -String merchantId
+        +CreditCardPayment(cardNumber, amount, merchantId)
+        +processPayment() boolean
+        -logInfo(message) void
+        -logError(message) void
+        -validateAmount() boolean
+        -validateMerchant() boolean
+    }
+    
+    class PayPalPayment {
+        -String email
+        -double amount
+        -String merchantId
+        +PayPalPayment(email, amount, merchantId)
+        +processPayment() boolean
+        -logInfo(message) void
+        -logError(message) void
+        -validateAmount() boolean
+        -validateMerchant() boolean
+    }
+    
+    class BankTransferPayment {
+        -String accountNumber
+        -double amount
+        -String merchantId
+        +BankTransferPayment(accountNumber, amount, merchantId)
+        +processPayment() boolean
+        -logInfo(message) void
+        -logError(message) void
+        -validateAmount() boolean
+        -validateMerchant() boolean
+    }
+    
+    note for CreditCardPayment "🔴 Duplicated validation\n🔴 Duplicated logging\n🔴 Similar structure"
+    note for PayPalPayment "🔴 90% code duplication\n🔴 Hard to maintain\n🔴 Violation of DRY"
+    note for BankTransferPayment "🔴 Copy-paste programming\n🔴 Bug multiplication\n🔴 Inconsistent behavior"
+```
+
+**Deshi:** "The diagram makes the problem obvious! All three classes share so much common code."
+
+**Sensei:** "Precisely! This scattered duplication is like having the same wound in three places. We must heal them all with one solution."
+
 ---
 
 ## The Practice (実践)
@@ -150,6 +201,64 @@ public abstract class Payment {
 **Sensei explains:** "Notice the `final` keyword on `processPayment()`. This is the Template Method pattern - it defines the algorithm structure while allowing subclasses to customize specific steps. The `final` prevents subclasses from changing the overall flow."
 
 </details>
+
+### Refactored Structure - Template Method Pattern
+
+*Sensei draws the healing solution:*
+
+```mermaid
+classDiagram
+    class Payment {
+        <<abstract>>
+        #double amount
+        #String merchantId
+        #String paymentType
+        +Payment(amount, merchantId, paymentType)
+        +processPayment() boolean ⭐final
+        #validateCommonFields() boolean
+        #validateSpecificFields()* boolean
+        #executePayment()* boolean
+        #logInfo(message) void
+        #logError(message) void
+    }
+    
+    class CreditCardPayment {
+        -String cardNumber
+        +CreditCardPayment(cardNumber, amount, merchantId)
+        +validateSpecificFields() boolean
+        +executePayment() boolean
+    }
+    
+    class PayPalPayment {
+        -String email
+        +PayPalPayment(email, amount, merchantId)
+        +validateSpecificFields() boolean
+        +executePayment() boolean
+    }
+    
+    class BankTransferPayment {
+        -String accountNumber
+        +BankTransferPayment(accountNumber, amount, merchantId)
+        +validateSpecificFields() boolean
+        +executePayment() boolean
+    }
+    
+    Payment <|-- CreditCardPayment : extends
+    Payment <|-- PayPalPayment : extends
+    Payment <|-- BankTransferPayment : extends
+    
+    note for Payment "🟢 Template Method Pattern\n🟢 Common behavior centralized\n🟢 Algorithm structure fixed\n⭐ final method prevents override"
+    
+    note for CreditCardPayment "✅ Only unique validation\n✅ No code duplication\n✅ Focused responsibility"
+    
+    note for PayPalPayment "✅ Inherits all common behavior\n✅ Easy to maintain\n✅ Consistent logging"
+    
+    note for BankTransferPayment "✅ DRY principle followed\n✅ Single source of truth\n✅ Extensible design"
+```
+
+**Deshi:** "Amazing! The common behavior flows down from the abstract class, while each subclass only implements what makes it unique!"
+
+**Sensei:** "Yes, and notice the Template Method pattern in action. The `processPayment()` method defines the steps: validate common fields, validate specific fields, then execute payment. Each subclass fills in only the specific steps."
 
 ### Step 2: Refactor Concrete Classes
 
@@ -219,6 +328,59 @@ public class CreditCardPayment extends Payment {
 ## The Challenge (挑戦)
 
 **Sensei:** "Now, deshi, demonstrate your refactoring mastery:"
+
+### Challenge: Notification System Refactoring
+
+*Sensei presents the challenge with a visual overview:*
+
+```mermaid
+classDiagram
+    class EmailNotification {
+        -String email
+        -String message
+        -String priority
+        +EmailNotification(email, message, priority)
+        +send() boolean
+        -validateEmail() boolean
+        -validateMessage() boolean
+        -log(level, message) void
+        -formatMessage() String
+    }
+    
+    class SmsNotification {
+        -String phoneNumber
+        -String message
+        -String priority
+        +SmsNotification(phoneNumber, message, priority)
+        +send() boolean
+        -validatePhone() boolean
+        -validateMessage() boolean
+        -log(level, message) void
+        -formatMessage() String
+    }
+    
+    class PushNotification {
+        -String deviceId
+        -String message
+        -String priority
+        +PushNotification(deviceId, message, priority)
+        +send() boolean
+        -validateDevice() boolean
+        -validateMessage() boolean
+        -log(level, message) void
+        -formatMessage() String
+    }
+    
+    note for EmailNotification "🔄 Your Mission:\n1. Extract common behavior\n2. Create abstract base class\n3. Implement Template Method\n4. Remove code duplication"
+    
+    note for SmsNotification "🎯 Look for patterns:\n- Common validation\n- Shared logging\n- Similar send workflow\n- Message formatting"
+    
+    note for PushNotification "✨ Expected Result:\n- 70% less code\n- Easier to maintain\n- Consistent behavior\n- Easy to extend"
+```
+
+**Deshi:** "I can see the same duplication pattern as the payment system! Each notification type has similar validation, logging, and workflow structure."
+
+**Sensei:** "Precisely! Apply the same healing technique. Remember the Template Method pattern - define the algorithm structure in the abstract class, let subclasses implement the specific details."
 
 ### Setup
 

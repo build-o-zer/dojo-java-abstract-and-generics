@@ -1,0 +1,11 @@
+id,value,region,category
+1,100,North,Electronics
+2,150,South,Clothing
+3,200,North,Electronics
+4,75,East,Books
+5,300,West,Electronics
+6,125,South,Clothing
+7,80,North,Books
+8,220,East,Electronics
+9,95,West,Books
+10,180,South,Clothing

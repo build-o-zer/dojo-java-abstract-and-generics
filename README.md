@@ -36,5 +36,3 @@ Prerequisite: Make sure you have [busybox](https://busybox.net/) installed on yo
 ```bash
 $ busybox httpd -p 9595 -f -h ./containers/dojo-site/content
 ```
-
-

@@ -65,6 +65,58 @@ public class Rectangle {
 
 **Sensei:** "Excellent observation! This is where abstract classes shine. They allow us to define common behavior while forcing subclasses to implement specific details."
 
+### Class Structure Diagram
+
+*Sensei draws upon the digital scroll, showing the relationship between abstract and concrete:*
+
+```mermaid
+classDiagram
+    class Shape {
+        <<abstract>>
+        #String name
+        +Shape(String name)
+        +displayInfo() void
+        +getName() String
+        +calculateArea()* double
+    }
+    
+    class Circle {
+        -double radius
+        +Circle(double radius)
+        +calculateArea() double
+    }
+    
+    class Rectangle {
+        -double width
+        -double height
+        +Rectangle(double width, double height)
+        +calculateArea() double
+    }
+    
+    class Triangle {
+        -double base
+        -double height
+        +Triangle(double base, double height)
+        +calculateArea() double
+    }
+    
+    Shape <|-- Circle : extends
+    Shape <|-- Rectangle : extends
+    Shape <|-- Triangle : extends
+    
+    note for Shape "Abstract class defines\ncommon structure and\nbehavior. calculateArea()\nmust be implemented\nby subclasses."
+    
+    note for Circle "Implements area calculation\nusing π × r²"
+    
+    note for Rectangle "Implements area calculation\nusing width × height"
+    
+    note for Triangle "Implements area calculation\nusing ½ × base × height"
+```
+
+**Deshi:** "Ah! The diagram makes it clear - the abstract `Shape` class provides the blueprint, and each concrete class fills in the specific details."
+
+**Sensei:** "Precisely, deshi. The inheritance arrow shows the 'is-a' relationship, while the abstract method (marked with *) requires implementation in each subclass."
+
 ---
 
 ## The Practice (実践)

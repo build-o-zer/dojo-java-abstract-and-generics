@@ -7,6 +7,7 @@
     <!-- Primary CDN sources -->
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js" onerror="console.error('Failed to load Marked.js from primary CDN')"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" onerror="console.error('Failed to load Highlight.js from primary CDN')"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js" onerror="console.error('Failed to load Mermaid.js from primary CDN')"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     
     <!-- Fallback CDN sources -->
@@ -28,9 +29,18 @@
             script2.onerror = () => console.error('Highlight.js fallback also failed');
             document.head.appendChild(script2);
         }
+        
+        // Fallback loading for Mermaid.js
+        if (typeof mermaid === 'undefined') {
+            console.log('Loading Mermaid.js fallback...');
+            const script3 = document.createElement('script');
+            script3.src = 'https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js';
+            script3.onerror = () => console.error('Mermaid.js fallback also failed');
+            document.head.appendChild(script3);
+        }
     </script>
     <script>
-        // Initialize highlight.js when loaded
+        // Initialize highlight.js and mermaid when loaded
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof hljs !== 'undefined') {
                 hljs.configure({
@@ -39,6 +49,20 @@
                 console.log('Highlight.js initialized successfully');
             } else {
                 console.warn('Highlight.js not available - syntax highlighting disabled');
+            }
+            
+            if (typeof mermaid !== 'undefined') {
+                mermaid.initialize({ 
+                    startOnLoad: false,
+                    theme: 'dark',
+                    themeVariables: {
+                        fontFamily: 'monospace',
+                        fontSize: '14px'
+                    }
+                });
+                console.log('Mermaid initialized successfully');
+            } else {
+                console.warn('Mermaid not available - diagram rendering disabled');
             }
         });
     </script>
@@ -211,6 +235,11 @@
                         });
                     }
                     
+                    // Render Mermaid diagrams if available
+                    if (typeof mermaid !== 'undefined') {
+                        this.renderMermaidDiagrams(viewer);
+                    }
+                    
                     // Apply dialogue styling
                     this.applyDialogueStyling(viewer);
                     
@@ -223,6 +252,47 @@
                         </div>
                     `;
                 }
+            }
+            
+            renderMermaidDiagrams(viewer) {
+                const mermaidBlocks = viewer.querySelectorAll('pre code.language-mermaid, pre code[class*="mermaid"]');
+                
+                mermaidBlocks.forEach((block, index) => {
+                    try {
+                        const mermaidCode = block.textContent;
+                        const mermaidId = `mermaid-diagram-${Date.now()}-${index}`;
+                        
+                        // Create a div to hold the rendered diagram
+                        const diagramDiv = document.createElement('div');
+                        diagramDiv.className = 'mermaid-diagram';
+                        diagramDiv.id = mermaidId;
+                        diagramDiv.style.textAlign = 'center';
+                        diagramDiv.style.margin = '20px 0';
+                        diagramDiv.style.padding = '20px';
+                        diagramDiv.style.backgroundColor = '#1a1a1a';
+                        diagramDiv.style.borderRadius = '8px';
+                        diagramDiv.style.border = '1px solid #333';
+                        
+                        // Render the diagram
+                        mermaid.render(mermaidId + '-svg', mermaidCode)
+                            .then(({svg, bindFunctions}) => {
+                                diagramDiv.innerHTML = svg;
+                                if (bindFunctions) {
+                                    bindFunctions(diagramDiv);
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Mermaid rendering error:', err);
+                                diagramDiv.innerHTML = `<div style="color: #ff6b6b; padding: 10px;">Error rendering diagram: ${err.message}</div>`;
+                            });
+                        
+                        // Replace the code block with the diagram
+                        block.parentElement.parentElement.replaceChild(diagramDiv, block.parentElement);
+                        
+                    } catch (err) {
+                        console.error('Failed to process Mermaid diagram:', err);
+                    }
+                });
             }
             
             applyDialogueStyling(viewer) {
@@ -404,6 +474,7 @@
             console.log(`Checking dependencies (attempt ${initRetryCount + 1}/${maxInitRetries})...`);
             console.log('Marked available:', typeof marked !== 'undefined');
             console.log('Hljs available:', typeof hljs !== 'undefined');
+            console.log('Mermaid available:', typeof mermaid !== 'undefined');
             console.log('Speech Synthesis available:', 'speechSynthesis' in window);
             
             // Check if required libraries are loaded
@@ -423,6 +494,11 @@
             if (typeof hljs === 'undefined') {
                 console.warn('Highlight.js library not loaded - syntax highlighting will be disabled');
                 // Continue without syntax highlighting
+            }
+            
+            if (typeof mermaid === 'undefined') {
+                console.warn('Mermaid library not loaded - diagram rendering will be disabled');
+                // Continue without diagrams
             }
             
             if (!('speechSynthesis' in window)) {

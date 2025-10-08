@@ -1,0 +1,64 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "value": 100,
+      "region": "North",
+      "category": "Electronics"
+    },
+    {
+      "id": 2,
+      "value": 150,
+      "region": "South",
+      "category": "Clothing"
+    },
+    {
+      "id": 3,
+      "value": 200,
+      "region": "North",
+      "category": "Electronics"
+    },
+    {
+      "id": 4,
+      "value": 75,
+      "region": "East",
+      "category": "Books"
+    },
+    {
+      "id": 5,
+      "value": 300,
+      "region": "West",
+      "category": "Electronics"
+    },
+    {
+      "id": 6,
+      "value": 125,
+      "region": "South",
+      "category": "Clothing"
+    },
+    {
+      "id": 7,
+      "value": 80,
+      "region": "North",
+      "category": "Books"
+    },
+    {
+      "id": 8,
+      "value": 220,
+      "region": "East",
+      "category": "Electronics"
+    },
+    {
+      "id": 9,
+      "value": 95,
+      "region": "West",
+      "category": "Books"
+    },
+    {
+      "id": 10,
+      "value": 180,
+      "region": "South",
+      "category": "Clothing"
+    }
+  ]
+}
