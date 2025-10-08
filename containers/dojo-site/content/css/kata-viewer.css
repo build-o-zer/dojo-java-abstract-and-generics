@@ -38,7 +38,7 @@ body {
 .kata-container {
     display: flex;
     min-height: 100vh;
-    max-width: 1200px;
+    max-width: 1366px;
     margin: 0 auto;
 }
 
@@ -63,16 +63,41 @@ body {
 /* Kata List */
 .kata-list {
     list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.category-header {
+    margin: 20px 0 10px 0;
+    padding: 0;
+}
+
+.category-header:first-child {
+    margin-top: 0;
+}
+
+.category-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 0;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    margin-bottom: 10px;
 }
 
 .kata-item {
     margin-bottom: 10px;
-    padding: 12px;
     background: rgba(139, 69, 19, 0.3);
     border-radius: 8px;
     border-left: 4px solid #ffd700;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    overflow: hidden;
 }
 
 .kata-item:hover {
@@ -80,20 +105,248 @@ body {
     transform: translateX(5px);
 }
 
+/* Default hover behavior - will be overridden by category-specific styles */
+
 .kata-item.active {
     background: rgba(255, 215, 0, 0.2);
     border-left-color: #fff;
 }
 
+.kata-content {
+    flex: 1;
+    padding: 12px;
+    padding-right: 60px; /* Space for ninja icon */
+}
+
+/* Default active behavior - will be overridden by category-specific styles */
+
 .kata-title {
     font-weight: bold;
     color: #ffd700;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    font-size: 1rem;
+}
+
+.kata-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.kata-category {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.ninja-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 48px;
+    object-fit: contain;
+    object-position: center;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.kata-item:hover .ninja-icon {
+    opacity: 1;
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+/* Level-specific ninja icon styling */
+.kata-abstraction .ninja-icon,
+.kata-generics .ninja-icon {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+/* Beginner ninja (white belt) subtle glow */
+.kata-item .ninja-icon[alt*="Beginner"] {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
+}
+
+/* Intermediate ninja (orange belt) warm glow */
+.kata-item .ninja-icon[alt*="Intermediate"] {
+    filter: drop-shadow(0 0 4px rgba(255, 165, 0, 0.5));
+}
+
+/* Advanced ninja (red belt) intense glow */
+.kata-item .ninja-icon[alt*="Advanced"] {
+    filter: drop-shadow(0 0 5px rgba(255, 69, 69, 0.6));
+}
+
+/* Level-specific border colors matching ninja belt colors */
+/* Beginner ninja (white belt) - white border */
+.kata-item.kata-level-beginner {
+    border-left-color: #ffffff;
+}
+
+/* Intermediate ninja (orange belt) - orange border */
+.kata-item.kata-level-intermediate {
+    border-left-color: #ff8c00;
+}
+
+/* Advanced ninja (red belt) - red border */
+.kata-item.kata-level-advanced {
+    border-left-color: #ff4545;
+}
+
+.kata-subject {
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    font-style: italic;
+}
+
+.kata-concepts {
+    margin-bottom: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.concept-tag {
+    font-size: 0.7rem;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    padding: 2px 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    display: inline-block;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .kata-meta {
     font-size: 0.85rem;
     color: #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.kata-level {
+    font-weight: bold;
+}
+
+.duration {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Category-specific styling */
+.kata-abstraction {
+    border-left-color: #ff6b6b;
+}
+
+.kata-abstraction .kata-category {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.kata-abstraction:hover {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.kata-abstraction.active {
+    background: rgba(255, 107, 107, 0.15);
+    border-left-color: #ff6b6b;
+}
+
+.kata-abstraction .concept-tag {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+.kata-generics {
+    border-left-color: #4ecdc4;
+}
+
+.kata-generics .kata-category {
+    background: rgba(78, 205, 196, 0.2);
+    color: #4ecdc4;
+    border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.kata-generics:hover {
+    background: rgba(78, 205, 196, 0.1);
+}
+
+.kata-generics.active {
+    background: rgba(78, 205, 196, 0.15);
+    border-left-color: #4ecdc4;
+}
+
+.kata-generics .concept-tag {
+    background: rgba(78, 205, 196, 0.15);
+    color: #4ecdc4;
+    border-color: rgba(78, 205, 196, 0.3);
+}
+
+/* Add some spacing between the last kata of a category and the next category header */
+.kata-item:last-of-type {
+    margin-bottom: 15px;
+}
+
+/* Responsive ninja icon adjustments */
+@media (max-width: 768px) {
+    .ninja-icon {
+        width: 40px;
+        padding: 6px;
+    }
+    
+    .kata-content {
+        padding-right: 50px; /* Adjust for smaller ninja icon */
+    }
+    
+    .kata-header {
+        margin-bottom: 6px;
+    }
+    
+    .kata-category {
+        font-size: 0.7rem;
+        padding: 1px 4px;
+    }
+}
+
+/* Custom tooltip for ninja icons */
+.ninja-icon::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -35px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffd700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    z-index: 1000;
+}
+
+.ninja-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-3px);
 }
 
 /* Main Content Area */
@@ -147,89 +400,117 @@ body {
     margin: 15px 0 8px 0;
 }
 
-/* Enhanced Dialogue Styling */
+/* Enhanced Dialogue Styling with Flexbox Layout */
 .dialogue-sensei, .dialogue-deshi {
-    padding: 15px 20px;
+    display: flex;
+    align-items: flex-start;
     margin: 15px 0;
     border-radius: 12px;
-    position: relative;
     max-width: 85%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    gap: 12px;
 }
 
 /* Sensei dialogue - left aligned with warm golden theme */
 .dialogue-sensei {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(218, 165, 32, 0.1) 100%);
     border-left: 4px solid #ffd700;
-    text-align: left;
     margin-right: auto;
-}
-
-.dialogue-sensei::before {
-    content: "";
-    display: inline-block;
-    width: 70px;
-    height: 70px;
-    background-image: url('/images/sensei.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-right: 8px;
-    vertical-align: middle;
-    opacity: 0.9;
-}
-
-.dialogue-sensei strong {
-    color: #ffd700;
-    font-weight: bold;
+    padding: 15px;
 }
 
 /* Deshi dialogue - right aligned with cooler blue theme */
 .dialogue-deshi {
     background: linear-gradient(135deg, rgba(100, 149, 237, 0.15) 0%, rgba(70, 130, 180, 0.1) 100%);
     border-right: 4px solid #6495ed;
-    text-align: left;
     margin-left: auto;
     color: #e6f3ff;
+    padding: 15px;
 }
 
-.dialogue-deshi::before {
-    content: "";
-    display: inline-block;
+/* Dialogue Avatar Container */
+.dialogue-avatar {
+    position: relative;
+    flex-shrink: 0;
     width: 70px;
     height: 70px;
-    background-image: url('/images/deshi.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-right: 8px;
-    vertical-align: middle;
+}
+
+.dialogue-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     opacity: 0.9;
 }
 
-.dialogue-deshi strong {
+/* Dialogue Content Container */
+.dialogue-content {
+    flex: 1;
+    min-width: 0; /* Prevents content from shrinking below content size */
+    padding-top: 4px;
+}
+
+.dialogue-sensei .dialogue-content {
+    color: #f5f5dc;
+}
+
+.dialogue-deshi .dialogue-content {
+    color: #e6f3ff;
+}
+
+.dialogue-sensei strong, .dialogue-sensei .dialogue-content strong {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.dialogue-deshi strong, .dialogue-deshi .dialogue-content strong {
     color: #87ceeb;
     font-weight: bold;
 }
 
 /* Text-to-Speech Play Button */
 .tts-play-button {
-    display: inline-block;
-    background: rgba(255, 215, 0, 0.8);
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
     border: none;
     border-radius: 50%;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
-    margin-left: 8px;
-    position: relative;
     transition: all 0.3s ease;
-    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.tts-play-button:hover {
+/* Sensei TTS button - yellow */
+.dialogue-sensei .tts-play-button {
+    background: rgba(255, 215, 0, 0.9);
+}
+
+.dialogue-sensei .tts-play-button:hover {
     background: rgba(255, 215, 0, 1);
-    transform: scale(1.1);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.dialogue-sensei .tts-play-button.speaking {
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 140, 0, 0.9) 100%);
+    animation: pulse 1.5s infinite;
+}
+
+/* Deshi TTS button - light blue */
+.dialogue-deshi .tts-play-button {
+    background: rgba(135, 206, 235, 0.9);
+}
+
+.dialogue-deshi .tts-play-button:hover {
+    background: rgba(135, 206, 235, 1);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.dialogue-deshi .tts-play-button.speaking {
+    background: linear-gradient(45deg, rgba(135, 206, 235, 0.9) 0%, rgba(100, 149, 237, 0.9) 100%);
+    animation: pulse 1.5s infinite;
 }
 
 .tts-play-button::before {
@@ -239,17 +520,12 @@ body {
     left: 52%;
     transform: translate(-50%, -50%);
     color: #2c1810;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
 }
 
 .tts-play-button.speaking::before {
     content: "⏸";
-}
-
-.tts-play-button.speaking {
-    background: linear-gradient(45deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 140, 0, 0.9) 100%);
-    animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
@@ -294,10 +570,256 @@ body {
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
 
+/* Sensei Image Styling */
+.sensei-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sensei-image {
+    width: auto;
+    height: auto;
+    transform: scale(2);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+    transition: all 0.3s ease;
+    margin: 40px 0; /* Extra margin to account for double size */
+}
+
+.sensei-image:hover {
+    transform: scale(2.1);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.8));
+}
+
 .welcome p {
     font-size: 1.2rem;
     color: #f5f5dc;
     margin-bottom: 15px;
+}
+
+/* Front Matter Header Styling */
+.front-matter-header {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.3) 0%, rgba(139, 69, 19, 0.1) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.fm-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+    padding-bottom: 16px;
+}
+
+.fm-title {
+    font-size: 2.2rem;
+    color: #ffd700;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    flex: 1;
+}
+
+.fm-ninja-level {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.fm-ninja-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.fm-level-text {
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Full-width Goal Section */
+.fm-goal-section {
+    margin-bottom: 20px;
+}
+
+.fm-goal-card {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.fm-goal-card .fm-meta-label {
+    font-size: 1rem;
+    color: #4ecdc4;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.fm-goal-card .fm-meta-value {
+    font-size: 1.2rem;
+    color: #f5f5dc;
+    line-height: 1.4;
+    font-style: italic;
+    text-align: center;
+}
+
+.fm-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.fm-meta-item {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #ffd700;
+}
+
+.fm-meta-label {
+    font-size: 0.9rem;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.fm-meta-value {
+    font-size: 1.1rem;
+    color: #f5f5dc;
+    line-height: 1.3;
+    text-align: centered;
+}
+
+/* Goal sensei styling for full-width layout */
+.fm-goal-sensei {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.fm-sensei-icon {
+    width: 128px;
+    height: auto;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+    transition: all 0.3s ease;
+    opacity: 0.9;
+}
+
+.fm-sensei-icon:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.8));
+    opacity: 1;
+}
+
+.fm-category-abstraction {
+    color: #ff6b6b !important;
+    font-weight: bold;
+}
+
+.fm-category-generics {
+    color: #4ecdc4 !important;
+    font-weight: bold;
+}
+
+.fm-concepts-section, .fm-prerequisites-section {
+    margin-bottom: 16px;
+}
+
+.fm-section-title {
+    font-size: 1.1rem;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fm-concepts-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fm-concept-tag {
+    font-size: 0.8rem;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    display: inline-block;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.fm-prerequisites-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fm-prerequisites-list li {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    border-left: 3px solid #4ecdc4;
+    color: #e0e0e0;
+}
+
+/* Ninja Fight Image Styling */
+.ninja-fight-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ninja-fight-image {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    border: 4px solid #000000;
+    border-radius: 12px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.8),
+        0 4px 16px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    opacity: 0.9;
+}
+
+.ninja-fight-image:hover {
+    transform: scale(1.02);
+    box-shadow: 
+        0 12px 48px rgba(0, 0, 0, 0.9),
+        0 6px 24px rgba(0, 0, 0, 0.7),
+        0 0 20px rgba(255, 215, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.15);
+    opacity: 1;
 }
 
 /* Mobile Responsive for Kata Viewer */
@@ -324,11 +846,85 @@ body {
     /* Mobile dialogue adjustments */
     .dialogue-sensei, .dialogue-deshi {
         max-width: 95%;
-        padding: 12px 15px;
+        padding: 12px;
+        gap: 8px;
     }
     
-    .dialogue-sensei::before, .dialogue-deshi::before {
-        font-size: 1em;
+    .dialogue-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .tts-play-button {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .tts-play-button::before {
+        font-size: 8px;
+    }
+    
+    /* Mobile ninja-fight image adjustments */
+    .ninja-fight-image {
+        max-width: 280px;
+        border-width: 3px;
+    }
+    
+    .ninja-fight-container {
+        margin-top: 20px;
+    }
+    
+    /* Mobile sensei image adjustments */
+    .sensei-image {
+        transform: scale(1.5);
+        margin: 25px 0;
+    }
+    
+    .sensei-image:hover {
+        transform: scale(1.6);
+    }
+    
+    /* Mobile front matter header adjustments */
+    .front-matter-header {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .fm-title-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .fm-title {
+        font-size: 1.8rem;
+    }
+    
+    .fm-ninja-level {
+        align-self: flex-end;
+    }
+    
+    .fm-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .fm-concepts-list {
+        justify-content: center;
+    }
+    
+    /* Mobile goal section adjustments */
+    .fm-goal-card {
+        padding: 12px 16px;
+    }
+    
+    .fm-goal-card .fm-meta-value {
+        font-size: 1.1rem;
+    }
+    
+    /* Mobile sensei icon in goal card */
+    .fm-sensei-icon {
+        width: 28px;
     }
 }
 

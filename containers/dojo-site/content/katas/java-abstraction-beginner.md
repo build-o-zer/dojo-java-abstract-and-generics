@@ -1,10 +1,21 @@
-# Java Kata: Abstract Classes Fundamentals
-
-**Subject:** Abstract Classes and Methods  
-**Goal:** Understand the basics of abstract classes and when to use them  
-**Level:** Beginner  
-**Duration:** 15-20 minutes  
-
+---
+title: "Abstract Classes Fundamentals"
+subject: "Abstract Classes and Methods"
+goal: "Understand the basics of abstract classes and when to use them"
+level: "Beginner"
+duration: "15-20 minutes"
+category: "Abstraction"
+difficulty: "beginner"
+concepts:
+  - "Abstract classes"
+  - "Abstract methods"
+  - "Inheritance"
+  - "Polymorphism"
+prerequisites:
+  - "Basic Java classes"
+  - "Inheritance concepts"
+estimated_time: 20
+ninja_belt: "white"
 ---
 
 ## 道場での対話 (Dojo Dialogue)

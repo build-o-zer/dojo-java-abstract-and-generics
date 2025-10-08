@@ -1,15 +1,16 @@
 {
   "metadata": {
-    "title": "Java Abstraction Katas",
-    "description": "Progressive katas for learning Java abstraction concepts",
-    "version": "1.0.0",
-    "lastUpdated": "2025-10-07"
+    "title": "Java Abstraction & Generics Katas",
+    "description": "Progressive katas for learning Java abstraction and generics concepts",
+    "version": "2.0.0",
+    "lastUpdated": "2025-10-08"
   },
   "katas": [
     {
       "id": "java-abstraction-beginner",
       "title": "Java Abstraction Fundamentals",
       "file": "java-abstraction-beginner.md",
+      "category": "Abstraction",
       "subject": "Abstract Classes",
       "level": "Beginner",
       "duration": "15-20 min",
@@ -20,6 +21,7 @@
       "id": "java-abstraction-intermediate",
       "title": "Abstract Classes for Refactoring",
       "file": "java-abstraction-intermediate.md",
+      "category": "Abstraction",
       "subject": "Refactoring with Abstraction",
       "level": "Intermediate",
       "duration": "25-30 min",
@@ -30,11 +32,45 @@
       "id": "java-abstraction-advanced",
       "title": "Advanced Abstraction Patterns",
       "file": "java-abstraction-advanced.md",
+      "category": "Abstraction",
       "subject": "Complex Abstraction Patterns",
       "level": "Advanced",
       "duration": "35-45 min",
       "tags": ["generics", "design-patterns", "architecture"],
       "prerequisites": ["Completed intermediate kata", "Familiarity with generics"]
+    },
+    {
+      "id": "java-generics-beginner",
+      "title": "Java Generics Fundamentals",
+      "file": "java-generics-beginner.md",
+      "category": "Generics",
+      "subject": "Generic Classes and Methods",
+      "level": "Beginner",
+      "duration": "20-25 min",
+      "tags": ["generics", "type-safety", "basics"],
+      "prerequisites": ["Basic Java knowledge", "Understanding of classes and methods"]
+    },
+    {
+      "id": "java-generics-intermediate",
+      "title": "Bounded Generics and Wildcards",
+      "file": "java-generics-intermediate.md",
+      "category": "Generics",
+      "subject": "Bounds and PECS Pattern",
+      "level": "Intermediate",
+      "duration": "30-35 min",
+      "tags": ["bounded-generics", "wildcards", "variance"],
+      "prerequisites": ["Completed generics beginner kata", "Understanding of inheritance"]
+    },
+    {
+      "id": "java-generics-advanced",
+      "title": "Advanced Generic Patterns",
+      "file": "java-generics-advanced.md",
+      "category": "Generics",
+      "subject": "Recursive Bounds and Complex Types",
+      "level": "Advanced",
+      "duration": "40-50 min",
+      "tags": ["advanced-generics", "CRTP", "type-inference"],
+      "prerequisites": ["Completed generics intermediate kata", "Understanding of functional programming"]
     }
   ]
 }

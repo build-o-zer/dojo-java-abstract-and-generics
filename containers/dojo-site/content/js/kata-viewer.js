@@ -153,6 +153,10 @@ class GitKataViewer {
             const data = await response.json();
             this.katas = data.katas;
             this.metadata = data.metadata;
+            
+            // Load front matter from markdown files
+            await this.loadKataFrontMatter();
+            
             console.log('Loaded katas:', this.katas);
             console.log('Kata metadata:', this.metadata);
             
@@ -166,6 +170,167 @@ class GitKataViewer {
             this.katas = [];
             this.showKataLoadError(error);
         }
+    }
+    
+    async loadKataFrontMatter() {
+        try {
+            for (let kata of this.katas) {
+                try {
+                    const response = await fetch(`katas/${kata.file}`);
+                    if (response.ok) {
+                        const markdownContent = await response.text();
+                        const frontMatter = this.parseFrontMatter(markdownContent);
+                        // Merge front matter with existing kata data
+                        Object.assign(kata, frontMatter);
+                    }
+                } catch (error) {
+                    console.warn(`Failed to load front matter for ${kata.file}:`, error);
+                }
+            }
+        } catch (error) {
+            console.warn('Error loading kata front matter:', error);
+        }
+    }
+    
+    parseFrontMatter(content) {
+        const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n/;
+        const match = content.match(frontMatterRegex);
+        
+        if (!match) return {};
+        
+        const yamlContent = match[1];
+        const frontMatter = {};
+        
+        // Simple YAML parser for basic key-value pairs and arrays
+        const lines = yamlContent.split('\n');
+        let currentKey = null;
+        let currentArray = null;
+        
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) continue;
+            
+            if (trimmed.startsWith('- ')) {
+                // Array item
+                if (currentArray) {
+                    currentArray.push(trimmed.substring(2).replace(/['"]/g, ''));
+                }
+            } else if (trimmed.includes(':')) {
+                // Key-value pair
+                const [key, ...valueParts] = trimmed.split(':');
+                const value = valueParts.join(':').trim();
+                
+                if (value.startsWith('"') && value.endsWith('"')) {
+                    // String value
+                    frontMatter[key.trim()] = value.slice(1, -1);
+                } else if (value === '') {
+                    // Array follows
+                    currentKey = key.trim();
+                    currentArray = [];
+                    frontMatter[currentKey] = currentArray;
+                } else if (!isNaN(value)) {
+                    // Number value
+                    frontMatter[key.trim()] = parseInt(value);
+                } else {
+                    // Plain string
+                    frontMatter[key.trim()] = value.replace(/['"]/g, '');
+                }
+            }
+        }
+        
+        return frontMatter;
+    }
+    
+    stripFrontMatter(content) {
+        const frontMatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n/;
+        return content.replace(frontMatterRegex, '');
+    }
+    
+    renderFrontMatterHeader(frontMatter, kata) {
+        // Merge front matter with kata data, prioritizing front matter
+        const data = { ...kata, ...frontMatter };
+        
+        // Format concepts list
+        const conceptsList = data.concepts && data.concepts.length > 0
+            ? data.concepts.map(concept => `<span class="fm-concept-tag">${concept}</span>`).join('')
+            : '';
+        
+        // Format prerequisites list
+        const prerequisitesList = data.prerequisites && data.prerequisites.length > 0
+            ? data.prerequisites.map(prereq => `<li>${prereq}</li>`).join('')
+            : '<li>None</li>';
+        
+        // Format duration
+        const duration = data.duration || (data.estimated_time ? `${data.estimated_time} minutes` : 'Unknown duration');
+        
+        // Get ninja icon
+        const ninjaIcon = this.getNinjaIcon(data.level || data.difficulty || 'beginner');
+        const level = (data.level || data.difficulty || 'beginner');
+        const levelCapitalized = level.charAt(0).toUpperCase() + level.slice(1);
+        
+        return `
+            <div class="front-matter-header">
+                <div class="fm-title-section">
+                    <h1 class="fm-title">${data.title || 'Untitled Kata'}</h1>
+                    <div class="fm-ninja-level">
+                        <img src="images/${ninjaIcon}" alt="${level} ninja" class="fm-ninja-icon" />
+                        <span class="fm-level-text">${levelCapitalized} Level</span>
+                    </div>
+                </div>
+                
+                ${data.goal ? `
+                    <div class="fm-goal-section">
+                        <div class="fm-goal-card">
+                            <div class="fm-goal-sensei">
+                                <img src="images/sensei.png" alt="Sensei" class="fm-sensei-icon" />
+                            </div>
+                            <div class="fm-meta-label">Goal</div>
+                            <div class="fm-meta-value">${data.goal}</div>
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <div class="fm-meta-grid">
+                    ${data.subject ? `
+                        <div class="fm-meta-item">
+                            <div class="fm-meta-label">Subject</div>
+                            <div class="fm-meta-value">${data.subject}</div>
+                        </div>
+                    ` : ''}
+                    
+                    ${!data.subject && !data.goal ? `
+                        <div class="fm-meta-item">
+                            <div class="fm-meta-label">Description</div>
+                            <div class="fm-meta-value">No description available</div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="fm-meta-item">
+                        <div class="fm-meta-label">Category</div>
+                        <div class="fm-meta-value fm-category-${(data.category || 'unknown').toLowerCase()}">${data.category || 'Unknown'}</div>
+                    </div>
+                    
+                    <div class="fm-meta-item">
+                        <div class="fm-meta-label">Duration</div>
+                        <div class="fm-meta-value">${duration}</div>
+                    </div>
+                </div>
+                
+                ${conceptsList ? `
+                    <div class="fm-concepts-section">
+                        <div class="fm-section-title">Key Concepts</div>
+                        <div class="fm-concepts-list">${conceptsList}</div>
+                    </div>
+                ` : ''}
+                
+                ${data.prerequisites && data.prerequisites.length > 0 ? `
+                    <div class="fm-prerequisites-section">
+                        <div class="fm-section-title">Prerequisites</div>
+                        <ul class="fm-prerequisites-list">${prerequisitesList}</ul>
+                    </div>
+                ` : ''}
+            </div>
+        `;
     }
     
     showKataLoadError(error) {
@@ -185,16 +350,68 @@ class GitKataViewer {
         const kataList = document.getElementById('kataList');
         kataList.innerHTML = '';
         
-        this.katas.forEach((kata, index) => {
-            const li = document.createElement('li');
-            li.className = 'kata-item';
-            li.dataset.index = index;
-            li.innerHTML = `
-                <div class="kata-title">${kata.title}</div>
-                <div class="kata-meta">${kata.level} • ${kata.duration}</div>
+        // Group katas by category
+        const groupedKatas = this.katas.reduce((groups, kata, index) => {
+            const category = kata.category;
+            if (!groups[category]) {
+                groups[category] = [];
+            }
+            groups[category].push({...kata, originalIndex: index});
+            return groups;
+        }, {});
+        
+        // Render each category group
+        Object.keys(groupedKatas).forEach(category => {
+            // Add category header
+            const categoryHeader = document.createElement('li');
+            categoryHeader.className = 'category-header';
+            categoryHeader.innerHTML = `
+                <div class="category-title">${category} Katas</div>
             `;
-            kataList.appendChild(li);
+            kataList.appendChild(categoryHeader);
+            
+            // Add katas in this category
+            groupedKatas[category].forEach(kata => {
+                const li = document.createElement('li');
+                li.className = `kata-item kata-${kata.category.toLowerCase()} kata-level-${(kata.level || kata.difficulty || 'beginner').toLowerCase()}`;
+                li.dataset.index = kata.originalIndex;
+                const ninjaIcon = this.getNinjaIcon(kata.level || kata.difficulty || 'beginner');
+                
+                // Format duration
+                const duration = kata.duration || kata.estimated_time ? 
+                    (kata.duration || `${kata.estimated_time} min`) : 
+                    'Unknown duration';
+                
+                li.innerHTML = `
+                    <div class="kata-content">
+                        <div class="kata-header">
+                            <div class="kata-category">${kata.category}</div>
+                        </div>
+                        <div class="kata-title">${kata.title || 'Untitled Kata'}</div>
+                        <div class="kata-subject">${kata.subject || kata.goal || 'No description available'}</div>
+                        <div class="kata-meta">
+                            <span class="kata-level">${(kata.level || kata.difficulty || 'Beginner').charAt(0).toUpperCase() + (kata.level || kata.difficulty || 'beginner').slice(1)}</span>
+                            <span class="duration">${duration}</span>
+                        </div>
+                    </div>
+                    <img src="images/${ninjaIcon}" alt="${kata.level || kata.difficulty || 'beginner'} ninja" class="ninja-icon" title="${(kata.level || kata.difficulty || 'Beginner').charAt(0).toUpperCase() + (kata.level || kata.difficulty || 'beginner').slice(1)} Level" />
+                `;
+                kataList.appendChild(li);
+            });
         });
+    }
+    
+    getNinjaIcon(level) {
+        switch (level.toLowerCase()) {
+            case 'beginner':
+                return 'ninja-white.png';
+            case 'intermediate':
+                return 'ninja-orange.png';
+            case 'advanced':
+                return 'ninja-red.png';
+            default:
+                return 'ninja-white.png';
+        }
     }
     
     setupEventListeners() {
@@ -226,9 +443,18 @@ class GitKataViewer {
             }
             
             const markdown = await response.text();
-            const html = marked.parse(markdown);
+            // Parse front matter and strip it from content
+            const frontMatter = this.parseFrontMatter(markdown);
+            const contentWithoutFrontMatter = this.stripFrontMatter(markdown);
+            const html = marked.parse(contentWithoutFrontMatter);
             
-            viewer.innerHTML = `<div class="kata-content">${html}</div>`;
+            // Create front matter header
+            const frontMatterHtml = this.renderFrontMatterHeader(frontMatter, kata);
+            
+            viewer.innerHTML = `
+                ${frontMatterHtml}
+                <div class="kata-content">${html}</div>
+            `;
             this.currentViewer = viewer;
             
             // Apply Prism syntax highlighting and line numbers after markdown processing
@@ -300,16 +526,40 @@ class GitKataViewer {
         
         paragraphs.forEach(p => {
             const text = p.textContent.trim();
-            const innerHTML = p.innerHTML;
+            let innerHTML = p.innerHTML;
             
             // Check for Sensei dialogue
             if (text.startsWith('Sensei:') || innerHTML.includes('<strong>Sensei:</strong>')) {
+                // Remove the "Sensei:" label from the content
+                innerHTML = innerHTML.replace(/^<strong>Sensei:<\/strong>\s*/, '').replace(/^Sensei:\s*/, '');
+                
+                // Create new dialogue structure
+                const dialogueHtml = `
+                    <div class="dialogue-avatar">
+                        <img src="images/sensei.png" alt="Sensei" />
+                    </div>
+                    <div class="dialogue-content">${innerHTML}</div>
+                `;
+                
                 p.classList.add('dialogue-sensei');
+                p.innerHTML = dialogueHtml;
                 this.addTTSButton(p, 'sensei');
             }
             // Check for Deshi dialogue
             else if (text.startsWith('Deshi:') || innerHTML.includes('<strong>Deshi:</strong>')) {
+                // Remove the "Deshi:" label from the content
+                innerHTML = innerHTML.replace(/^<strong>Deshi:<\/strong>\s*/, '').replace(/^Deshi:\s*/, '');
+                
+                // Create new dialogue structure
+                const dialogueHtml = `
+                    <div class="dialogue-avatar">
+                        <img src="images/deshi.png" alt="Deshi" />
+                    </div>
+                    <div class="dialogue-content">${innerHTML}</div>
+                `;
+                
                 p.classList.add('dialogue-deshi');
+                p.innerHTML = dialogueHtml;
                 this.addTTSButton(p, 'deshi');
             }
             // Check for narrative text (text in italics or starting with *)
@@ -331,8 +581,11 @@ class GitKataViewer {
             this.speakText(paragraph, playButton, speaker);
         });
         
-        // Append button to the paragraph
-        paragraph.appendChild(playButton);
+        // Find the dialogue-avatar container and append button to it
+        const avatarContainer = paragraph.querySelector('.dialogue-avatar');
+        if (avatarContainer) {
+            avatarContainer.appendChild(playButton);
+        }
     }
 
     speakText(paragraph, button, speaker) {

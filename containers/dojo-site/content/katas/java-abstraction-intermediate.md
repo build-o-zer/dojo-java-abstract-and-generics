@@ -1,10 +1,22 @@
-# Java Kata: Abstract Classes for Refactoring
-
-**Subject:** Refactoring with Abstract Classes  
-**Goal:** Learn to identify code duplication and refactor using abstract classes  
-**Level:** Intermediate  
-**Duration:** 25-30 minutes  
-
+---
+title: "Abstract Classes for Refactoring"
+subject: "Refactoring with Abstract Classes"
+goal: "Learn to identify code duplication and refactor using abstract classes"
+level: "Intermediate"
+duration: "25-30 minutes"
+category: "Abstraction"
+difficulty: "intermediate"
+concepts:
+  - "Code refactoring"
+  - "Abstract classes"
+  - "Template method pattern"
+  - "Code duplication elimination"
+prerequisites:
+  - "Abstract classes fundamentals"
+  - "Inheritance"
+  - "Basic refactoring concepts"
+estimated_time: 30
+ninja_belt: "orange"
 ---
 
 ## 道場での対話 (Dojo Dialogue)

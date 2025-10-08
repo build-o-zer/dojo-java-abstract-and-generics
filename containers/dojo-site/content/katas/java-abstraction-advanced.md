@@ -1,11 +1,25 @@
-# Java Kata: Advanced Abstraction Patterns - Refactoring the Monolith
-
-**Subject:** Refactoring Monolithic Code using Advanced Abstraction Patterns  
-**Goal:** Transform a complex monolithic class into a clean, abstracted architecture  
-**Level:** Advanced  
-**Duration:** 45-60 minutes  
-
 ---
+title: "Advanced Abstraction Patterns - Refactoring the Monolith"
+subject: "Refactoring Monolithic Code using Advanced Abstraction Patterns"
+goal: "Transform a complex monolithic class into a clean, abstracted architecture"
+level: "Advanced"
+duration: "45-60 minutes"
+category: "Abstraction"
+difficulty: "advanced"
+concepts:
+  - "Monolithic refactoring"
+  - "Advanced abstraction patterns"
+  - "Strategy pattern"
+  - "Template method pattern"
+  - "Factory pattern"
+prerequisites:
+  - "Abstract classes mastery"
+  - "Design patterns knowledge"
+  - "Complex refactoring experience"
+estimated_time: 60
+ninja_belt: "red"
+---
+
 
 ## 道場での対話 (Dojo Dialogue)
 
