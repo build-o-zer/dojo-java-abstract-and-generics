@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "Java Abstraction Katas",
+    "description": "Progressive katas for learning Java abstraction concepts",
+    "version": "1.0.0",
+    "lastUpdated": "2025-10-07"
+  },
+  "katas": [
+    {
+      "id": "java-abstraction-beginner",
+      "title": "Java Abstraction Fundamentals",
+      "file": "java-abstraction-beginner.md",
+      "subject": "Abstract Classes",
+      "level": "Beginner",
+      "duration": "15-20 min",
+      "tags": ["basics", "inheritance", "oop"],
+      "prerequisites": ["Basic Java knowledge", "Understanding of classes and objects"]
+    },
+    {
+      "id": "java-abstraction-intermediate",
+      "title": "Abstract Classes for Refactoring",
+      "file": "java-abstraction-intermediate.md",
+      "subject": "Refactoring with Abstraction",
+      "level": "Intermediate",
+      "duration": "25-30 min",
+      "tags": ["refactoring", "template-method", "design-patterns"],
+      "prerequisites": ["Completed beginner kata", "Understanding of inheritance"]
+    },
+    {
+      "id": "java-abstraction-advanced",
+      "title": "Advanced Abstraction Patterns",
+      "file": "java-abstraction-advanced.md",
+      "subject": "Complex Abstraction Patterns",
+      "level": "Advanced",
+      "duration": "35-45 min",
+      "tags": ["generics", "design-patterns", "architecture"],
+      "prerequisites": ["Completed intermediate kata", "Familiarity with generics"]
+    }
+  ]
+}

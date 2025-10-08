@@ -1,0 +1,15 @@
+services:
+  dojo-site:
+    build:
+      context: .
+      dockerfile: ./containers/dojo-site/dojo-site.dockerfile
+    container_name: dojo-site-java-abstract-and-generics
+    networks:
+      - dojo-network
+    ports:
+      - "9595:80"  # Map port 9595 to nginx port 80
+    restart: unless-stopped
+
+networks:
+  dojo-network:
+    driver: bridge

@@ -1,0 +1,333 @@
+/* Kata Viewer - Specific Styles */
+
+/* Navigation Bar */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    border-bottom: 2px solid #ffd700;
+}
+
+.nav-home {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-home:hover {
+    color: #fff;
+    transform: translateX(-3px);
+}
+
+/* Adjust body padding to account for fixed nav */
+body {
+    padding-top: 70px;
+}
+
+/* Kata Viewer Layout */
+.kata-container {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-right: 2px solid #ffd700;
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    color: #ffd700;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Kata List */
+.kata-list {
+    list-style: none;
+}
+
+.kata-item {
+    margin-bottom: 10px;
+    padding: 12px;
+    background: rgba(139, 69, 19, 0.3);
+    border-radius: 8px;
+    border-left: 4px solid #ffd700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.kata-item:hover {
+    background: rgba(139, 69, 19, 0.5);
+    transform: translateX(5px);
+}
+
+.kata-item.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-left-color: #fff;
+}
+
+.kata-title {
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 4px;
+}
+
+.kata-meta {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    padding: 20px 30px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.kata-viewer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #ffd700;
+    font-size: 1.2rem;
+}
+
+/* Kata Content Styling */
+.kata-content h1 {
+    color: #ffd700;
+    border-bottom: 2px solid #ffd700;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.kata-content h2 {
+    color: #ffd700;
+    margin: 30px 0 15px 0;
+    font-size: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.kata-content h3 {
+    color: #ffeb3b;
+    margin: 20px 0 10px 0;
+    font-size: 1.4rem;
+}
+
+.kata-content h4 {
+    color: #fff8e1;
+    margin: 15px 0 8px 0;
+}
+
+/* Enhanced Dialogue Styling */
+.dialogue-sensei, .dialogue-deshi {
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 12px;
+    position: relative;
+    max-width: 85%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Sensei dialogue - left aligned with warm golden theme */
+.dialogue-sensei {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(218, 165, 32, 0.1) 100%);
+    border-left: 4px solid #ffd700;
+    text-align: left;
+    margin-right: auto;
+}
+
+.dialogue-sensei::before {
+    content: "";
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    background-image: url('/images/sensei.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 8px;
+    vertical-align: middle;
+    opacity: 0.9;
+}
+
+.dialogue-sensei strong {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* Deshi dialogue - right aligned with cooler blue theme */
+.dialogue-deshi {
+    background: linear-gradient(135deg, rgba(100, 149, 237, 0.15) 0%, rgba(70, 130, 180, 0.1) 100%);
+    border-right: 4px solid #6495ed;
+    text-align: left;
+    margin-left: auto;
+    color: #e6f3ff;
+}
+
+.dialogue-deshi::before {
+    content: "";
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    background-image: url('/images/deshi.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-right: 8px;
+    vertical-align: middle;
+    opacity: 0.9;
+}
+
+.dialogue-deshi strong {
+    color: #87ceeb;
+    font-weight: bold;
+}
+
+/* Text-to-Speech Play Button */
+.tts-play-button {
+    display: inline-block;
+    background: rgba(255, 215, 0, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    margin-left: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+    vertical-align: middle;
+}
+
+.tts-play-button:hover {
+    background: rgba(255, 215, 0, 1);
+    transform: scale(1.1);
+}
+
+.tts-play-button::before {
+    content: "▶";
+    position: absolute;
+    top: 50%;
+    left: 52%;
+    transform: translate(-50%, -50%);
+    color: #2c1810;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.tts-play-button.speaking::before {
+    content: "⏸";
+}
+
+.tts-play-button.speaking {
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 140, 0, 0.9) 100%);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 1; }
+}
+
+/* Narrative text styling */
+.narrative {
+    background: rgba(75, 0, 130, 0.1);
+    padding: 12px 18px;
+    margin: 12px 0;
+    border-radius: 8px;
+    font-style: italic;
+    text-align: center;
+    border: 1px solid rgba(147, 112, 219, 0.3);
+    color: #dda0dd;
+}
+
+.narrative::before {
+    content: "✨";
+    margin-right: 6px;
+}
+
+/* Welcome Screen */
+.welcome {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.welcome h2 {
+    color: #ffd700;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.welcome .japanese {
+    font-size: 4rem;
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+}
+
+.welcome p {
+    font-size: 1.2rem;
+    color: #f5f5dc;
+    margin-bottom: 15px;
+}
+
+/* Mobile Responsive for Kata Viewer */
+@media (max-width: 768px) {
+    .kata-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid #ffd700;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .kata-viewer {
+        padding: 20px;
+    }
+    
+    /* Mobile dialogue adjustments */
+    .dialogue-sensei, .dialogue-deshi {
+        max-width: 95%;
+        padding: 12px 15px;
+    }
+    
+    .dialogue-sensei::before, .dialogue-deshi::before {
+        font-size: 1em;
+    }
+}

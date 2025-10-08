@@ -1,0 +1,311 @@
+/* Dojo Site - Shared Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Quintessential&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quintessential&family=Share+Tech+Mono&display=swap');
+
+/* Global Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Georgia", serif;
+    font-weight: 400;
+    font-style: normal;
+    background: linear-gradient(135deg, #2c1810 0%, #8b4513 50%, #d2691e 100%);
+    color: #f5f5dc;
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Japanese Character Styling */
+.japanese-character {
+    font-size: 4rem;
+    color: #ffd700;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+    margin-bottom: 10px;
+    font-family: serif;
+}
+
+/* Common Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Common Headers */
+h1,
+h2,
+h3 {
+    font-family: "Quintessential", "Georgia", serif;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Common Card/Section Styling */
+.card,
+.section {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* Common Button Styling */
+.button,
+.kata-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    padding: 20px 40px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #f5f5dc;
+    border: 2px solid #ffd700;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.button:hover,
+.kata-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    border-color: #fff;
+}
+
+/* Floating Decorative Elements */
+.floating-element {
+    position: absolute;
+    opacity: 0.1;
+    pointer-events: none;
+    font-size: 8rem;
+    color: #ffd700;
+    z-index: -1;
+}
+
+.element-1 {
+    top: 10%;
+    left: 5%;
+    animation: float 6s ease-in-out infinite;
+}
+
+.element-2 {
+    top: 60%;
+    right: 10%;
+    animation: float 8s ease-in-out infinite reverse;
+}
+
+.element-3 {
+    bottom: 20%;
+    left: 15%;
+    animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Common Grid Layout */
+.grid {
+    display: grid;
+    gap: 20px;
+}
+
+.grid-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Principle/Feature Cards */
+.principle-card,
+.feature-card {
+    background: rgba(139, 69, 19, 0.3);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    text-align: center;
+}
+
+.principle-card h4,
+.feature-card h4 {
+    color: #ffd700;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.principle-card p,
+.feature-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    border-top: 3px solid #ffd700;
+    margin-top: 40px;
+}
+
+.footer-text {
+    font-size: 1.1rem;
+    color: #f5f5dc;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+/* Common Typography */
+p {
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+strong {
+    color: #ffd700;
+}
+
+em {
+    color: #ffeb3b;
+    font-style: italic;
+}
+
+/* Code Styling */
+code {
+    font-family: "Share Tech Mono", monospace;
+    font-weight: 400;
+    font-style: normal;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ffd700;
+}
+
+pre {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 15px 0;
+    border-left: 4px solid #ffd700;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+th {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* List Styling */
+ul,
+ol {
+    margin: 15px 0 15px 30px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* Blockquote Styling */
+blockquote {
+    border-left: 4px solid #ffd700;
+    margin: 20px 0;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 0 8px 8px 0;
+    padding: 15px 20px;
+}
+
+/* Mobile Responsive Base */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .japanese-character {
+        font-size: 2.5rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-auto {
+        grid-template-columns: 1fr;
+    }
+
+    .card,
+    .section {
+        padding: 20px;
+    }
+
+    .floating-element {
+        font-size: 4rem;
+    }
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Dojo - Welcome</title>
+    <link rel="stylesheet" href="/css/dojo-common.css">
+    <link rel="stylesheet" href="/css/landing-page.css">
+</head>
+
+<body>
+    <!-- Floating decorative elements -->
+    <div class="floating-element element-1">道</div>
+    <div class="floating-element element-2">武</div>
+    <div class="floating-element element-3">心</div>
+
+    <div class="container">
+        <header>
+            <div class="japanese-character">道場</div>
+            <h1 class="dojo-title">Coding Dojo</h1>
+            <p class="subtitle">Where Code Meets Discipline</p>
+            <p class="subject">Java Abstract and Generics</p>
+        </header>
+
+        <div class="main-content">
+            <div class="dojo-image">
+                <img src="/images/dojo-image-git.png" alt="Coding Dojo" />
+
+                <div class="kata-section">
+                    <div class="kata-link">
+                        <a href="kata-viewer.html" class="kata-button">
+                            <div class="japanese-character">練習</div>
+                            <span>Enter Java Abstract and Generics Kata Dojo</span>
+                        </a>
+                        <p>Learn intermediate Java concepts through traditional sensei-deshi dialogues</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="dojo-description">
+                <h2>Welcome to the Coding Dojo</h2>
+                <p>
+                    A <strong>Coding Dojo</strong> is a meeting where a team of coders get together to work on a
+                    programming challenge.
+                    They work together to solve the problem, learning from each other and improving their skills through
+                    practice and collaboration.
+                </p>
+                <p>
+                    Like traditional martial arts dojos, our coding dojo emphasizes discipline, continuous learning, and
+                    mastery through repetition.
+                    Here, developers gather to practice their craft, share knowledge, and grow together as a community.
+                </p>
+                <p>
+                    Whether you're a beginner seeking guidance or a master sharing wisdom, everyone has something to
+                    learn and teach.
+                    The path of the developer, like the way of the warrior, is one of constant improvement and
+                    dedication.
+                </p>
+                <p class="audio-controls" style="text-align: center;">
+                    <button id="play-button">Play</button>
+                    <br />
+                    <span style="font-family: 'Lucida Console', monospace" id="channels-text"></span>
+                    <br />
+                    <input type="range" min="0" max="100" value="100" id="volume-slider" /> <span>Volume</span>
+                    <br />
+                </p>
+            </div>
+        </div>
+
+
+
+
+        <div class="principles">
+            <h3>Dojo Principles</h3>
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <div class="japanese-character">礼</div>
+                    <h4>Respect (Rei)</h4>
+                    <p>Respect for code, colleagues, and the learning process. Every line of code deserves attention and
+                        care.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="japanese-character">忍</div>
+                    <h4>Perseverance (Nin)</h4>
+                    <p>Persistence in the face of challenging bugs and complex problems. Great code comes from
+                        determination.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="japanese-character">学</div>
+                    <h4>Learning (Gaku)</h4>
+                    <p>Continuous learning and improvement. The way of the developer is a path of endless discovery.</p>
+                </div>
+
+                <div class="principle-card">
+                    <div class="japanese-character">協</div>
+                    <h4>Collaboration (Kyō)</h4>
+                    <p>Working together as a team. The best solutions emerge from collective wisdom and shared effort.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-text">
+                "The expert in anything was once a beginner." - Helen Hayes
+            </p>
+            <p class="footer-text">
+                Begin your journey in the Coding Dojo today.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple notification that the dojo is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Coding Dojo loaded successfully');
+
+            // Add a subtle zen message after a delay
+            setTimeout(function () {
+                const zenMessage = document.createElement('div');
+                zenMessage.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(255, 215, 0, 0.9);
+                    color: #2c1810;
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    z-index: 1000;
+                    font-family: 'Georgia', serif;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                    animation: pulse 2s infinite;
+                    cursor: pointer;
+                `;
+                zenMessage.innerHTML = '🧘 Welcome to the Dojo';
+                zenMessage.onclick = function () { zenMessage.remove(); };
+                document.body.appendChild(zenMessage);
+
+                // Auto-hide after 5 seconds
+                setTimeout(function () {
+                    if (zenMessage.parentNode) zenMessage.remove();
+                }, 5000);
+            }, 1000);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/gh/zeozeozeo/jslibxm@master/dist/jslibxm.min.js"></script>
+    <script src="/js/index.js"></script>
+</body>
+
+</html>

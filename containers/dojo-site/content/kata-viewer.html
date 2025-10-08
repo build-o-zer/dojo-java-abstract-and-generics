@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Abstraction Kata Viewer - Coding Dojo</title>
+    <!-- Primary CDN sources -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js" onerror="console.error('Failed to load Marked.js from primary CDN')"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" onerror="console.error('Failed to load Highlight.js from primary CDN')"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    
+    <!-- Fallback CDN sources -->
+    <script>
+        // Fallback loading for Marked.js
+        if (typeof marked === 'undefined') {
+            console.log('Loading Marked.js fallback...');
+            const script1 = document.createElement('script');
+            script1.src = 'https://unpkg.com/marked@4.3.0/marked.min.js';
+            script1.onerror = () => console.error('Marked.js fallback also failed');
+            document.head.appendChild(script1);
+        }
+        
+        // Fallback loading for Highlight.js
+        if (typeof hljs === 'undefined') {
+            console.log('Loading Highlight.js fallback...');
+            const script2 = document.createElement('script');
+            script2.src = 'https://unpkg.com/@highlightjs/cdn-assets@11.8.0/highlight.min.js';
+            script2.onerror = () => console.error('Highlight.js fallback also failed');
+            document.head.appendChild(script2);
+        }
+    </script>
+    <script>
+        // Initialize highlight.js when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof hljs !== 'undefined') {
+                hljs.configure({
+                    ignoreUnescapedHTML: true
+                });
+                console.log('Highlight.js initialized successfully');
+            } else {
+                console.warn('Highlight.js not available - syntax highlighting disabled');
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="css/dojo-common.css">
+    <link rel="stylesheet" href="css/kata-viewer.css">
+</head>
+<body>
+    <!-- Floating decorative elements -->
+    <div class="floating-element element-1">道</div>
+    <div class="floating-element element-2">武</div>
+    <div class="floating-element element-3">心</div>
+    
+    <!-- Navigation Bar -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-home">← Back to Dojo</a>
+    </nav>
+
+    <div class="kata-container">
+        <div class="sidebar">
+            <h2>Java Abstraction Katas</h2>
+            <div class="japanese" style="text-align: center; font-size: 2rem; color: #ffd700; margin-bottom: 20px;">練習</div>
+            <ul class="kata-list" id="kataList">
+                <!-- Katas will be loaded here -->
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="kata-viewer" id="kataViewer">
+                <div class="welcome">
+                    <div class="japanese">道場</div>
+                    <h2>Welcome to Java Abstraction Kata Dojo</h2>
+                    <p>Select a kata from the sidebar to begin your training.</p>
+                    <p>Each kata will guide you through Java abstraction concepts using the traditional sensei-deshi dialogue format.</p>
+                    <p><em>"In abstraction, we find the essence of things, free from the burden of specific implementation."</em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class GitKataViewer {
+            constructor() {
+                this.katas = [];
+                this.init();
+            }
+            
+            async init() {
+                await this.loadKatas();
+                this.renderKataList();
+                this.setupEventListeners();
+                
+                // Configure marked for syntax highlighting
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (typeof hljs !== 'undefined') {
+                            if (lang && hljs.getLanguage(lang)) {
+                                try {
+                                    return hljs.highlight(code, { language: lang }).value;
+                                } catch (err) {
+                                    console.warn('Highlight.js error:', err);
+                                }
+                            }
+                            try {
+                                return hljs.highlightAuto(code).value;
+                            } catch (err) {
+                                console.warn('Highlight.js auto error:', err);
+                            }
+                        }
+                        return code; // Return original code if hljs is not available
+                    },
+                    breaks: true,
+                    gfm: true
+                });
+            }
+            
+            async loadKatas() {
+                try {
+                    const response = await fetch('katas.json');
+                    if (!response.ok) {
+                        throw new Error(`Failed to load katas: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    this.katas = data.katas;
+                    this.metadata = data.metadata;
+                    console.log('Loaded katas:', this.katas);
+                    console.log('Kata metadata:', this.metadata);
+                    
+                    // Update page title if metadata is available
+                    if (this.metadata && this.metadata.title) {
+                        document.title = `${this.metadata.title} - Coding Dojo`;
+                    }
+                } catch (error) {
+                    console.error('Error loading katas:', error);
+                    // Fallback to empty array with error message
+                    this.katas = [];
+                    this.showKataLoadError(error);
+                }
+            }
+            
+            showKataLoadError(error) {
+                const kataList = document.getElementById('kataList');
+                kataList.innerHTML = `
+                    <li class="error-message">
+                        <div style="color: #ff6b6b; padding: 20px; text-align: center;">
+                            <h4>Error Loading Katas</h4>
+                            <p>${error.message}</p>
+                            <p style="font-size: 0.9em;">Please check your network connection and try refreshing the page.</p>
+                        </div>
+                    </li>
+                `;
+            }
+            
+            renderKataList() {
+                const kataList = document.getElementById('kataList');
+                kataList.innerHTML = '';
+                
+                this.katas.forEach((kata, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'kata-item';
+                    li.dataset.index = index;
+                    li.innerHTML = `
+                        <div class="kata-title">${kata.title}</div>
+                        <div class="kata-meta">${kata.level} • ${kata.duration}</div>
+                    `;
+                    kataList.appendChild(li);
+                });
+            }
+            
+            setupEventListeners() {
+                document.getElementById('kataList').addEventListener('click', (e) => {
+                    const kataItem = e.target.closest('.kata-item');
+                    if (kataItem) {
+                        const index = parseInt(kataItem.dataset.index);
+                        this.loadKata(index);
+                        
+                        // Update active state
+                        document.querySelectorAll('.kata-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        kataItem.classList.add('active');
+                    }
+                });
+            }
+            
+            async loadKata(index) {
+                const kata = this.katas[index];
+                const viewer = document.getElementById('kataViewer');
+                
+                viewer.innerHTML = '<div class="loading">Loading kata...</div>';
+                
+                try {
+                    const response = await fetch(`katas/${kata.file}`);
+                    if (!response.ok) {
+                        throw new Error(`Failed to load kata: ${response.status}`);
+                    }
+                    
+                    const markdown = await response.text();
+                    const html = marked.parse(markdown);
+                    
+                    viewer.innerHTML = `<div class="kata-content">${html}</div>`;
+                    
+                    // Re-highlight code blocks if hljs is available
+                    if (typeof hljs !== 'undefined') {
+                        viewer.querySelectorAll('pre code').forEach((block) => {
+                            try {
+                                hljs.highlightElement(block);
+                            } catch (err) {
+                                console.warn('Failed to highlight code block:', err);
+                            }
+                        });
+                    }
+                    
+                    // Apply dialogue styling
+                    this.applyDialogueStyling(viewer);
+                    
+                } catch (error) {
+                    viewer.innerHTML = `
+                        <div class="loading" style="color: #ff6b6b;">
+                            <h3>Error Loading Kata</h3>
+                            <p>${error.message}</p>
+                            <p>Make sure the kata file exists in the content/katas/ directory.</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            applyDialogueStyling(viewer) {
+                // Find all paragraphs in the kata content
+                const paragraphs = viewer.querySelectorAll('.kata-content p');
+                
+                paragraphs.forEach(p => {
+                    const text = p.textContent.trim();
+                    const innerHTML = p.innerHTML;
+                    
+                    // Check for Sensei dialogue
+                    if (text.startsWith('Sensei:') || innerHTML.includes('<strong>Sensei:</strong>')) {
+                        p.classList.add('dialogue-sensei');
+                        this.addTTSButton(p, 'sensei');
+                    }
+                    // Check for Deshi dialogue
+                    else if (text.startsWith('Deshi:') || innerHTML.includes('<strong>Deshi:</strong>')) {
+                        p.classList.add('dialogue-deshi');
+                        this.addTTSButton(p, 'deshi');
+                    }
+                    // Check for narrative text (text in italics or starting with *)
+                    else if (p.innerHTML.startsWith('<em>') || text.startsWith('*')) {
+                        p.classList.add('narrative');
+                    }
+                });
+            }
+
+            addTTSButton(paragraph, speaker) {
+                // Create TTS play button
+                const playButton = document.createElement('button');
+                playButton.className = 'tts-play-button';
+                playButton.setAttribute('aria-label', `Play ${speaker} dialogue`);
+                playButton.title = `Play ${speaker} dialogue`;
+                
+                // Add click event for TTS
+                playButton.addEventListener('click', () => {
+                    this.speakText(paragraph, playButton, speaker);
+                });
+                
+                // Append button to the paragraph
+                paragraph.appendChild(playButton);
+            }
+
+            speakText(paragraph, button, speaker) {
+                // Check if native Speech Synthesis is available
+                if (!window.speechSynthesis) {
+                    console.warn('Speech Synthesis not supported in this browser');
+                    return;
+                }
+
+                // Ensure voices are loaded
+                this.ensureVoicesLoaded(() => {
+                    this.performSpeech(paragraph, button, speaker);
+                });
+            }
+
+            ensureVoicesLoaded(callback) {
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    callback();
+                } else {
+                    // Voices not loaded yet, wait for the voiceschanged event
+                    const voicesChangedHandler = () => {
+                        window.speechSynthesis.removeEventListener('voiceschanged', voicesChangedHandler);
+                        callback();
+                    };
+                    window.speechSynthesis.addEventListener('voiceschanged', voicesChangedHandler);
+                    
+                    // Fallback timeout in case the event doesn't fire
+                    setTimeout(() => {
+                        window.speechSynthesis.removeEventListener('voiceschanged', voicesChangedHandler);
+                        callback();
+                    }, 1000);
+                }
+            }
+
+            performSpeech(paragraph, button, speaker) {
+                // Stop any current speech
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    // Reset all buttons
+                    document.querySelectorAll('.tts-play-button').forEach(btn => {
+                        btn.classList.remove('speaking');
+                    });
+                    
+                    // If clicking the same button that was speaking, just stop
+                    if (button.classList.contains('speaking')) {
+                        return;
+                    }
+                }
+
+                // Get the text content, removing the speaker label
+                let textToSpeak = paragraph.textContent.trim();
+                textToSpeak = textToSpeak.replace(/^(Sensei:|Deshi:)\s*/, '');
+                
+                if (!textToSpeak) return;
+
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                
+                // Force English language
+                utterance.lang = 'en-US';
+                
+                // Find appropriate voice based on speaker with safe guards & retry
+                const maxVoiceRetry = 5;
+                if (!this._voiceRetryCounts) this._voiceRetryCounts = new WeakMap();
+
+                const attempt = this._voiceRetryCounts.get(button) || 0;
+                const rawVoices = (window.speechSynthesis.getVoices() || []).filter(v => v && v.name && v.lang);
+                console.log("Speaker:", speaker);
+                console.log("Available voices:", rawVoices.map(v => `${v.name} (${v.lang})`));
+
+                let selectedVoice;
+                if (rawVoices.length === 0 && attempt < maxVoiceRetry) {
+                    console.warn(`No voices available (attempt ${attempt + 1}/${maxVoiceRetry}) - retrying shortly`);
+                    this._voiceRetryCounts.set(button, attempt + 1);
+                    setTimeout(() => this.performSpeech(paragraph, button, speaker), 300);
+                    return; // Defer until voices populate
+                }
+
+                if (rawVoices.length > 0) {
+                    if (speaker === 'sensei') {
+                        console.log("Selecting voice for Sensei");
+                        selectedVoice = rawVoices.find(v => v.lang.includes('en-GB') && v.name.toLowerCase().includes('female'))
+                            || rawVoices.find(v => v.lang.includes('en-GB'))
+                            || rawVoices.find(v => v.name.toLowerCase().includes('female') && v.lang.startsWith('en'))
+                            || rawVoices.find(v => v.lang && v.lang.startsWith('en'));
+                    } else {
+                        console.log("Selecting voice for Deshi");
+                        selectedVoice = rawVoices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('male'))
+                            || rawVoices.find(v => v.lang.includes('en-US'))
+                            || rawVoices.find(v => v.name.toLowerCase().includes('male') && v.lang.startsWith('en'))
+                            || rawVoices.find(v => v.lang && v.lang.startsWith('en'));
+                    }
+                    if (selectedVoice) {
+                        try {
+                            utterance.voice = selectedVoice;
+                            console.log(`Using ${speaker} voice: ${selectedVoice.name} (${selectedVoice.lang})`);
+                        } catch (e) {
+                            console.warn('Failed to set selected voice, proceeding with default:', e);
+                        }
+                    } else {
+                        console.warn(`No suitable voice match for ${speaker}, using browser default`);
+                    }
+                } else {
+                    console.warn('Proceeding without explicit voice (browser default) after retries');
+                }
+                
+                // Apply your specified voice presets
+                utterance.rate = speaker === 'sensei' ? 0.7 : 1.1; // Elderly slow vs youthful fast
+                utterance.pitch = speaker === 'sensei' ? 0.7 : 1.2; // Deep aged vs high young
+                utterance.volume = speaker === 'sensei' ? 0.95 : 1; // Softer elderly vs full young
+
+                utterance.onstart = () => {
+                    button.classList.add('speaking');
+                    console.log(`${speaker} speaking: "${textToSpeak.substring(0, 50)}..."`);
+                };
+                
+                utterance.onend = () => {
+                    button.classList.remove('speaking');
+                    console.log(`${speaker} finished speaking`);
+                };
+                
+                utterance.onerror = () => {
+                    button.classList.remove('speaking');
+                    console.warn(`TTS error for ${speaker}`);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+
+        }
+        
+        // Wait for all dependencies to load with retry logic
+        let initRetryCount = 0;
+        const maxInitRetries = 20; // Wait up to 2 seconds for libraries to load
+        
+        function initializeWhenReady() {
+            console.log(`Checking dependencies (attempt ${initRetryCount + 1}/${maxInitRetries})...`);
+            console.log('Marked available:', typeof marked !== 'undefined');
+            console.log('Hljs available:', typeof hljs !== 'undefined');
+            console.log('Speech Synthesis available:', 'speechSynthesis' in window);
+            
+            // Check if required libraries are loaded
+            if (typeof marked === 'undefined') {
+                initRetryCount++;
+                if (initRetryCount < maxInitRetries) {
+                    console.log('Marked.js library not loaded - retrying...');
+                    setTimeout(initializeWhenReady, 100); // Retry after 100ms
+                    return;
+                } else {
+                    console.error('Marked.js failed to load after all retries - cannot continue');
+                    document.body.innerHTML = '<div style="color: red; padding: 20px; font-family: Arial;">Error: Required markdown library failed to load. Please check your internet connection and refresh the page.</div>';
+                    return;
+                }
+            }
+            
+            if (typeof hljs === 'undefined') {
+                console.warn('Highlight.js library not loaded - syntax highlighting will be disabled');
+                // Continue without syntax highlighting
+            }
+            
+            if (!('speechSynthesis' in window)) {
+                console.warn('Speech Synthesis not supported - TTS will be disabled');
+            } else {
+                console.log('Native Speech Synthesis available - TTS enabled');
+            }
+            
+            console.log('Initializing GitKataViewer...');
+            const viewer = new GitKataViewer();
+            window.kataViewer = viewer; // Make it globally accessible if needed
+        }
+        
+        // Initialize the kata viewer when page loads, with delay to allow fallback scripts to load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initializeWhenReady, 500); // Give more time for fallback scripts
+        });
+    </script>
+</body>
+</html>
