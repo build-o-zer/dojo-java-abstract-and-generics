@@ -41,7 +41,8 @@ public class Pair<T, U> {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         
-        Pair pair = (Pair) obj;
+        @SuppressWarnings("unchecked")
+		Pair<T,U> pair = (Pair<T,U>) obj;
         return (first != null ? first.equals(pair.first) : pair.first == null) &&
                (second != null ? second.equals(pair.second) : pair.second == null);
     }
