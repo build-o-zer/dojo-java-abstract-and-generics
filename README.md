@@ -15,7 +15,7 @@ $ mvn compile test
 ## Running the Dojo
 
 Follow Option 1 or Option 2 below to start the Dojo.
-Then open your browser and navigate to `http://localhost:9595` and follow the instructions.
+Then open your browser and navigate to http://localhost:9595 and follow the instructions.
 
 ### Option 1: Using Docker Compose
 
