@@ -9,13 +9,13 @@ import java.util.List;
  * 
  * KATA TASK: Convert these methods to use generics for better type safety.
  */
-public class ArrayUtils {
+public class ArrayUtils<T> {
     
     /**
      * Finds the first element in array.
      * Problems: Returns Object, requires casting, no compile-time type safety.
      */
-    public static Object findFirst(Object[] array) {
+    public static <T> T findFirst(T[] array) {
         if (array == null || array.length == 0) {
             return null;
         }
@@ -25,7 +25,7 @@ public class ArrayUtils {
     /**
      * Finds the last element in array.
      */
-    public static Object findLast(Object[] array) {
+    public static <T> T findLast(T[] array) {
         if (array == null || array.length == 0) {
             return null;
         }
@@ -35,11 +35,11 @@ public class ArrayUtils {
     /**
      * Swaps two elements in an array.
      */
-    public static void swap(Object[] array, int i, int j) {
+    public static <T> void swap(T[] array, int i, int j) {
         if (array == null || i < 0 || j < 0 || i >= array.length || j >= array.length) {
             throw new IllegalArgumentException("Invalid array or indices");
         }
-        Object temp = array[i];
+        T temp = array[i];
         array[i] = array[j];
         array[j] = temp;
     }
@@ -47,7 +47,7 @@ public class ArrayUtils {
     /**
      * Converts array to list.
      */
-    public static List<Object> toList(Object[] array) {
+    public static <T> List<T> toList(T[] array) {
         if (array == null) {
             return new ArrayList<>();
         }

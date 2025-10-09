@@ -6,28 +6,28 @@ package org.buildozers.dojo.generics.beginner;
  * 
  * KATA TASK: Convert to generic Pair<T, U> class.
  */
-public class Pair {
-    private Object first;
-    private Object second;
+public class Pair<T, U> {
+    private T first;
+    private U second;
     
-    public Pair(Object first, Object second) {
+    public Pair(T first, U second) {
         this.first = first;
         this.second = second;
     }
     
-    public Object getFirst() {
+    public T getFirst() {
         return first;
     }
     
-    public void setFirst(Object first) {
+    public void setFirst(T first) {
         this.first = first;
     }
     
-    public Object getSecond() {
+    public U getSecond() {
         return second;
     }
     
-    public void setSecond(Object second) {
+    public void setSecond(U second) {
         this.second = second;
     }
     

@@ -6,14 +6,14 @@ package org.buildozers.dojo.generics.beginner;
  * 
  * KATA TASK: Convert this to a generic Box<T> class for type safety.
  */
-public class UnsafeBox {
-    private Object item;
+public class Box<T> {
+    private T item;
     
-    public void setItem(Object item) {
+    public void setItem(T item) {
         this.item = item;
     }
     
-    public Object getItem() {
+    public T getItem() {
         return item;
     }
     
