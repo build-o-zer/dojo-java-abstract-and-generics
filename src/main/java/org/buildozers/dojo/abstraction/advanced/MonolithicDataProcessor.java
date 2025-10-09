@@ -1,7 +1,6 @@
 package org.buildozers.dojo.abstraction.advanced;
 
-import static java.lang.System.err;
-import static java.lang.System.out;
+
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,11 +40,7 @@ import org.xml.sax.SAXException;
  * from the classpath instead of manual BufferedReader/InputStreamReader
  * handling.
  */
-public class MonolithicDataProcessor {
-
-    static final String DOUBLE_BAR = "\n" + "=".repeat(50) + "\n";
-    static final String SIMPLE_BAR = "\n" + "-".repeat(50) + "\n";
-    static final String XML_NAMESPACE = "http://buildozers.org/dojo/data";
+public class MonolithicDataProcessor implements DataProcessor {
 
     /**
      * This method demonstrates the problems of a monolithic approach:
@@ -66,16 +61,17 @@ public class MonolithicDataProcessor {
      *                        "Clothing", "Books"), or null/empty for no filtering
      * @param aggregationType the type of aggregation to perform ("SUM", "COUNT", or
      *                        other)
+     * @return the aggregated result as a long value
+     * @throws DataProcessingException if file processing fails
+     * @throws UnsupportedAggregationException if aggregation type is not supported
      */
-    public void processFileData(String filename, String format, boolean validate,
+    @Override
+    public long processFileData(String filename, String format, boolean validate,
             String categoryFilter, String aggregationType) {
-        out.println("=== Monolithic Data Processing ===");
 
         try {
             // File reading logic mixed with everything else
             if (format.equals("CSV")) {
-                out.println("Reading CSV file: " + filename);
-
                 try {
                     // Use Apache Commons CSV for proper CSV parsing
                     String csvData = loadTextFile(filename);
@@ -83,23 +79,17 @@ public class MonolithicDataProcessor {
                     CSVParser parser = CSVParser.parse(csvData, csvFormat);
 
                     if (validate) {
-                        out.println("Validating CSV data...");
                         // Validation using Apache Commons CSV
-                        int recordCount = 0;
                         for (CSVRecord csvRecord : parser) {
-                            recordCount++;
                             if (!csvRecord.isConsistent()) {
-                                err.println("Inconsistent record found at line " + csvRecord.getRecordNumber());
-                                return;
+                                throw new DataProcessingException("CSV record inconsistency found at line " + csvRecord.getRecordNumber());
                             }
                             // Validate required columns exist
                             if (!csvRecord.isMapped("id") || !csvRecord.isMapped("value") ||
                                     !csvRecord.isMapped("category") || !csvRecord.isMapped("region")) {
-                                err.println("Missing required columns in CSV");
-                                return;
+                                throw new DataProcessingException("CSV file is missing required columns (id, value, category, region)");
                             }
                         }
-                        out.println("Validation passed for " + recordCount + " records");
 
                         // Re-parse for further processing since parser is consumed
                         parser = CSVParser.parse(csvData, csvFormat);
@@ -109,55 +99,41 @@ public class MonolithicDataProcessor {
                     List<CSVRecord> filteredRecords = new ArrayList<>();
 
                     if (categoryFilter != null && !categoryFilter.isEmpty()) {
-                        out.println("Filtering CSV data (showing " + categoryFilter + " only)...");
                         // Filtering using Apache Commons CSV - store matches in temporary structure
                         for (CSVRecord csvRecord : parser) {
                             String category = csvRecord.get("category");
                             if (category.toLowerCase().contains(categoryFilter.toLowerCase())) {
                                 filteredRecords.add(csvRecord);
-                                out.println("Filtered: ID=" + csvRecord.get("id") +
-                                        ", Value=" + csvRecord.get("value") +
-                                        ", Region=" + csvRecord.get("region") +
-                                        ", Category=" + category);
                             }
                         }
-                        out.println("Stored " + filteredRecords.size() + " filtered records in temporary structure");
                     } else {
                         // No filter - store all records in temporary structure
                         for (CSVRecord csvRecord : parser) {
                             filteredRecords.add(csvRecord);
                         }
-                        out.println("Stored " + filteredRecords.size() + " records in temporary structure (no filter)");
                     }
 
                     // Use temporary data structure for aggregation
                     if ("SUM".equals(aggregationType)) {
-                        out.println("Aggregating CSV data from temporary structure (sum of values)...");
-                        int sum = 0;
+                        long sum = 0;
                         for (CSVRecord csvRecord : filteredRecords) {
                             try {
                                 sum += Integer.parseInt(csvRecord.get("value"));
                             } catch (NumberFormatException e) {
-                                err.println("Error parsing value in record " + csvRecord.getRecordNumber() + ": "
-                                        + csvRecord.get("value"));
+                                // Continue processing, skip invalid values
                             }
                         }
-                        out.println("Total sum: " + sum);
+                        return sum;
                     } else if ("COUNT".equals(aggregationType)) {
-                        out.println("Aggregating CSV data from temporary structure (counting records)...");
-                        out.println("Total record count: " + filteredRecords.size());
+                        return filteredRecords.size();
                     }
 
                 } catch (IOException e) {
-                    err.println("Error parsing CSV: " + e.getMessage());
-                    e.printStackTrace();
-                    return;
+                    throw new DataProcessingException("Failed to parse CSV file: " + filename, e);
                 }
 
             } else if (format.equals("JSON")) {
-                out.println("Reading JSON file: " + filename);
                 String jsonData = loadTextFile(filename);
-                out.println("JSON content loaded (" + jsonData.length() + " characters)");
 
                 try {
                     // Parse JSON using proper JSON library
@@ -165,12 +141,9 @@ public class MonolithicDataProcessor {
 
                     // validation
                     if (validate) {
-                        out.println("Validating JSON data against JSON Schema...");
                         if (!validateJsonAgainstSchema(jsonObject)) {
-                            err.println("JSON validation failed against JSON Schema!");
-                            return;
+                            throw new DataProcessingException("JSON validation failed against schema");
                         }
-                        out.println("JSON validation passed against JSON Schema");
                     }
 
                     JSONArray dataArray = jsonObject.getJSONArray("data");
@@ -180,58 +153,42 @@ public class MonolithicDataProcessor {
 
                     // Filtering
                     if (categoryFilter != null && !categoryFilter.isEmpty()) {
-                        out.println("Filtering JSON data (showing " + categoryFilter + " entries)...");
                         for (int i = 0; i < dataArray.length(); i++) {
                             JSONObject jsonRecord = dataArray.getJSONObject(i);
                             String category = jsonRecord.getString("category");
                             if (category.toLowerCase().contains(categoryFilter.toLowerCase())) {
                                 filteredJsonRecords.add(jsonRecord);
-                                out.println("Filtered: Record ID " + jsonRecord.getInt("id") +
-                                        " (Category: " + category + ", Value: " + jsonRecord.getInt("value") + ")");
                             }
                         }
-                        out.println("Stored " + filteredJsonRecords.size()
-                                + " filtered JSON records in temporary structure");
                     } else {
                         // No filter - store all records in temporary structure
                         for (int i = 0; i < dataArray.length(); i++) {
                             filteredJsonRecords.add(dataArray.getJSONObject(i));
                         }
-                        out.println("Stored " + filteredJsonRecords.size()
-                                + " JSON records in temporary structure (no filter)");
                     }
 
                     // Aggregation
                     if ("SUM".equals(aggregationType)) {
-                        out.println("Aggregating JSON data from temporary structure (summing values)...");
-                        int sum = 0;
+                        long sum = 0;
                         for (JSONObject jsonRecord : filteredJsonRecords) {
                             sum += jsonRecord.getInt("value");
                         }
-                        out.println("Total sum: " + sum);
+                        return sum;
                     } else if ("COUNT".equals(aggregationType)) {
-                        out.println("Aggregating JSON data from temporary structure (counting records)...");
-                        out.println("Total record count: " + filteredJsonRecords.size());
+                        return filteredJsonRecords.size();
                     }
 
                 } catch (JSONException e) {
-                    err.println("Error parsing JSON: " + e.getMessage());
-                    e.printStackTrace();
-                    return;
+                    throw new DataProcessingException("Failed to parse JSON file: " + filename, e);
                 }
 
             } else if (format.equals("XML")) {
-                out.println("Reading XML file: " + filename);
                 String xmlData = loadTextFile(filename);
-                out.println("XML content loaded (" + xmlData.length() + " characters)");
 
                 if (validate) {
-                    out.println("Validating XML data against XSD schema...");
                     if (!validateXmlAgainstXsd(xmlData)) {
-                        err.println("XML validation failed against XSD schema!");
-                        return;
+                        throw new DataProcessingException("XML validation failed against XSD schema");
                     }
-                    out.println("XML validation passed against XSD schema");
                 }
 
                 // Parse XML into DOM for proper processing
@@ -249,7 +206,6 @@ public class MonolithicDataProcessor {
 
                     // Filtering
                     if (categoryFilter != null && !categoryFilter.isEmpty()) {
-                        out.println("Filtering XML data (showing " + categoryFilter + " records using DOM)...");
                         for (int i = 0; i < recordNodes.getLength(); i++) {
                             Element recordElement = (Element) recordNodes.item(i);
 
@@ -260,54 +216,41 @@ public class MonolithicDataProcessor {
                                 String category = categoryNodes.item(0).getTextContent();
                                 if (categoryFilter.equals(category)) {
                                     filteredXmlElements.add(recordElement);
-                                    out.println(categoryFilter + " record found (DOM-based):");
-                                    out.println("  ID: " + getElementText(recordElement, "id"));
-                                    out.println("  Value: " + getElementText(recordElement, "value"));
-                                    out.println("  Region: " + getElementText(recordElement, "region"));
-                                    out.println("  Category: " + getElementText(recordElement, "category"));
                                 }
                             }
                         }
-                        out.println("Stored " + filteredXmlElements.size()
-                                + " filtered XML elements in temporary structure");
                     } else {
                         // No filter - store all elements in temporary structure
                         for (int i = 0; i < recordNodes.getLength(); i++) {
                             filteredXmlElements.add((Element) recordNodes.item(i));
                         }
-                        out.println("Stored " + filteredXmlElements.size()
-                                + " XML elements in temporary structure (no filter)");
                     }
 
                     // Aggregation
                     if ("SUM".equals(aggregationType)) {
-                        out.println("Aggregating XML data from temporary structure (summing values using DOM)...");
-                        int sum = 0;
+                        long sum = 0;
                         for (Element recordElement : filteredXmlElements) {
                             String valueText = getElementText(recordElement, "value");
                             try {
                                 sum += Integer.parseInt(valueText);
                             } catch (NumberFormatException e) {
-                                err.println("Error parsing value: " + valueText);
+                                // Continue processing, skip invalid values
                             }
                         }
-                        out.println("Total sum: " + sum);
+                        return sum;
                     } else if ("COUNT".equals(aggregationType)) {
-                        out.println("Aggregating XML data from temporary structure (counting records using DOM)...");
-                        out.println("Total record count: " + filteredXmlElements.size());
+                        return filteredXmlElements.size();
                     }
 
                 } catch (ParserConfigurationException | SAXException e) {
-                    err.println("Error parsing XML with DOM: " + e.getMessage());
-                    e.printStackTrace();
+                    throw new DataProcessingException("Failed to parse XML file: " + filename, e);
                 }
             }
         } catch (IOException e) {
-            err.println("Error processing file: " + e.getMessage());
-            e.printStackTrace();
+            throw new DataProcessingException("Failed to load file: " + filename, e);
         }
 
-        out.println("Processing complete!");
+        throw new UnsupportedAggregationException(aggregationType);
     }
 
     /**
@@ -372,10 +315,8 @@ public class MonolithicDataProcessor {
             return true; // Validation successful
 
         } catch (SAXException e) {
-            err.println("XML validation error: " + e.getMessage());
             return false;
         } catch (IOException e) {
-            err.println("Error reading XSD or XML: " + e.getMessage());
             return false;
         }
     }
@@ -409,18 +350,10 @@ public class MonolithicDataProcessor {
 
             return true; // Validation successful
         } catch (ValidationException e) {
-            err.println("JSON Schema validation error: " + e.getMessage());
-            if (e.getCausingExceptions() != null) {
-                for (ValidationException cause : e.getCausingExceptions()) {
-                    err.println("  - " + cause.getMessage());
-                }
-            }
             return false;
         } catch (IOException e) {
-            err.println("Error reading JSON Schema: " + e.getMessage());
             return false;
         } catch (JSONException e) {
-            err.println("JSON parsing error: " + e.getMessage());
             return false;
         }
     }
