@@ -1,5 +1,11 @@
 # Dojo Java Abstract and Generics
 
+This is a coding dojo to practice Java abstract classes and generics.
+
+<img src="./containers/dojo-site/content/images/dojo-no-theme.png" alt="Dojo with ninjas ready to fight" width="50%">
+
+*Welcome to the coding dojo, where developers sharpen their Java skills through practice and discipline!*
+
 ## Quick Start
 
 ## Prerequisites
