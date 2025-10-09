@@ -10,9 +10,9 @@ public class PaymentTestBefore {
     public static void main(String[] args) {
         System.out.println("=== Before Refactoring - Payment Processing System ===");
         
-        CreditCardPayment creditCard = new CreditCardPayment("1234567890123456", 100.0, MERCHANT_ID);
-        PayPalPayment paypal = new PayPalPayment("user@example.com", 75.0, MERCHANT_ID);
-        BankTransferPayment bankTransfer = new BankTransferPayment("12345678", "123456789", 200.0, MERCHANT_ID);
+        Payment creditCard = new CreditCardPayment("1234567890123456", 100.0, MERCHANT_ID);
+        Payment paypal = new PayPalPayment("user@example.com", 75.0, MERCHANT_ID);
+        Payment bankTransfer = new BankTransferPayment("12345678", "123456789", 200.0, MERCHANT_ID);
         
         System.out.println("\nProcessing payments...");
         creditCard.processPayment();

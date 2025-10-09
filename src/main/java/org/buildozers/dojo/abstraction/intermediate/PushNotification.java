@@ -4,34 +4,27 @@ package org.buildozers.dojo.abstraction.intermediate;
  * Legacy notification system - PushNotification with duplication
  * This represents the "before" state for the intermediate kata challenge
  */
-public class PushNotification {
-    private String message;
+public class PushNotification extends NotificationService {
+
     private String deviceId;
-    private String priority;
     
     public PushNotification(String message, String deviceId, String priority) {
-        this.message = message;
+        super(message, priority, "Push");
         this.deviceId = deviceId;
-        this.priority = priority;
     }
     
-    public boolean sendNotification() {
-        // Common validation (DUPLICATED AGAIN!)
-        if (message == null || message.trim().isEmpty()) {
-            logError("Message cannot be empty");
-            return false;
-        }
-        if (message.length() > 256) { // Push notifications have their own limit
-            logError("Message too long. Max: 256 characters");
-            return false;
-        }
-        
+    @Override
+    protected boolean specificValidation() {
         // Specific validation
         if (deviceId == null || deviceId.length() < 10) {
             logError("Invalid device ID: " + deviceId);
             return false;
         }
-        
+        return true;
+    }
+
+    @Override
+    protected boolean executeNotification() {
         // Send notification
         logAttempt();
         System.out.println("🔔 Sending push notification to device: " + deviceId);
@@ -40,16 +33,11 @@ public class PushNotification {
         
         return true;
     }
-    
-    private void logAttempt() {
+
+
+    @Override
+    protected void logAttempt() {
         System.out.println("[PUSH] Attempting to send " + priority + " priority message to: " + deviceId);
     }
     
-    private void logSuccess() {
-        System.out.println("[PUSH] Message delivered successfully");
-    }
-    
-    private void logError(String error) {
-        System.err.println("[PUSH] ERROR: " + error);
-    }
 }

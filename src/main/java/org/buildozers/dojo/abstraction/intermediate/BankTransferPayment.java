@@ -4,31 +4,18 @@ package org.buildozers.dojo.abstraction.intermediate;
  * Legacy payment processing - BankTransferPayment with lots of duplication
  * This represents the "before" state that students will refactor
  */
-public class BankTransferPayment {
+public class BankTransferPayment extends Payment {
     private String accountNumber;
     private String routingNumber;
-    private double amount;
-    private String merchantId;
     
     public BankTransferPayment(String accountNumber, String routingNumber, double amount, String merchantId) {
+        super(amount, merchantId, "BANK Payment");
         this.accountNumber = accountNumber;
         this.routingNumber = routingNumber;
-        this.amount = amount;
-        this.merchantId = merchantId;
     }
     
-    public boolean processPayment() {
-        // Common validation logic (DUPLICATED AGAIN!)
-        if (amount <= 0) {
-            logError("Invalid amount: " + amount);
-            return false;
-        }
-        if (merchantId == null || merchantId.isEmpty()) {
-            logError("Invalid merchant ID");
-            return false;
-        }
-        
-        // Specific validation
+    @Override 
+    protected boolean validateSpecificFields() {
         if (accountNumber == null || accountNumber.length() < 8) {
             logError("Invalid account number");
             return false;
@@ -37,17 +24,13 @@ public class BankTransferPayment {
             logError("Invalid routing number");
             return false;
         }
-        
-        // Simulate processing
+        return true;
+    }
+
+    @Override 
+    protected boolean executePayment() {
         logInfo("Processing bank transfer payment of $" + amount);
         return true;
     }
-    
-    private void logInfo(String message) {
-        System.out.println("[INFO] [BANK_TRANSFER] " + message);
-    }
-    
-    private void logError(String message) {
-        System.err.println("[ERROR] [BANK_TRANSFER] " + message);
-    }
+
 }
