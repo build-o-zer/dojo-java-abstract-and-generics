@@ -20,7 +20,41 @@ estimated_time: 35
 ninja_belt: "orange"
 ---
 
-*Sensei:* Excellent progress, my student. You have mastered basic generics. Now we venture into deeper waters - bounded types and wildcards.
+## Pre-Dialog Knowledge Check
+
+Before diving into advanced generics, test your understanding of intermediate concepts:
+
+### Question 1: What does the bounded type parameter `<T extends Number>` accomplish?
+
+a) It makes T faster at runtime
+b) It constrains T to be Number or any of its subtypes
+c) It allows T to extend multiple classes
+d) It makes the code compile faster
+
+### Question 2: In the PECS principle, what does "Producer Extends" mean?
+
+a) Producers should extend Object
+b) When reading from a collection, use `<? extends T>`
+c) Producers must implement the Extends interface
+d) Extended classes produce more objects
+
+### Question 3: What's wrong with this code?
+
+```java
+List<? extends Number> numbers = new ArrayList<Integer>();
+numbers.add(42); // Attempting to add Integer
+```
+
+a) Nothing is wrong, it will work fine
+b) You can't add to a list with upper bound wildcards
+c) Integer is not a Number
+d) The list should be `List<Number>`
+
+> Answers : 1:b;2:b;3:b
+
+---
+
+*Sensei:* Excellent progress, my student! You have mastered basic generics. Now we venture into deeper waters - bounded types and wildcards.
 
 *Deshi:* Sensei, I'm comfortable with `<T>`, but what about `<T extends Number>` and `<? super T>`?
 
@@ -306,6 +340,35 @@ mvn test -Dtest=SortingUtilsTest
 2. **Forgetting PECS**: Use `extends` for reading, `super` for writing
 3. **Over-constraining**: Don't add bounds unless you need them
 4. **Generic Array Creation**: `new T[10]` doesn't work - use collections instead
+
+## Post-Kata Knowledge Check
+
+Now that you've mastered bounded generics and wildcards, test your advanced understanding:
+
+### Question 1: What's the difference between `<T extends Comparable<T>>` and `<T extends Comparable<? super T>>`?
+
+a) There is no difference, they're equivalent
+b) The second allows T to compare with its supertypes, handling inheritance better
+c) The first is faster at runtime
+d) The second only works with primitive types
+
+### Question 2: In a method signature like `void process(List<? super Integer> list)`, what can you safely do?
+
+a) Add Integer objects to the list
+b) Read Integer objects from the list
+c) Both add and read Integer objects
+d) Neither add nor read objects
+
+### Question 3: Given `Repository<T extends Entity>`, which statement is true?
+
+a) T can be any type
+b) T must be exactly the Entity class
+c) T must be Entity or any class that extends Entity
+d) T must extend at least two interfaces
+
+> Answers : 1:b;2:a;3:c
+
+---
 
 ## Reflection Questions
 
