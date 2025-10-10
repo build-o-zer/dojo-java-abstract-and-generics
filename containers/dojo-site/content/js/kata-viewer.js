@@ -7,6 +7,7 @@ class GitKataViewer {
     constructor() {
         this.katas = [];
         this.currentViewer = null;
+        this.knowledgeCheck = new KnowledgeCheck();
         
         // Make this instance globally available for external access
         window.kataViewer = this;
@@ -134,7 +135,13 @@ class GitKataViewer {
         }
         
         // Split into lines and create simple structure
-        const lines = highlightedCode.split('\n');
+        let lines = highlightedCode.split('\n');
+        
+        // Remove trailing empty lines that come from markdown formatting
+        while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+            lines.pop();
+        }
+        
         const numberedLines = lines.map((line, index) => {
             const lineNumber = index + 1;
             const content = line || ' '; // Handle empty lines
@@ -445,7 +452,11 @@ class GitKataViewer {
             const markdown = await response.text();
             // Parse front matter and strip it from content
             const frontMatter = this.parseFrontMatter(markdown);
-            const contentWithoutFrontMatter = this.stripFrontMatter(markdown);
+            let contentWithoutFrontMatter = this.stripFrontMatter(markdown);
+            
+            // Process knowledge check sections before converting to HTML
+            contentWithoutFrontMatter = this.knowledgeCheck.processKnowledgeCheck(contentWithoutFrontMatter);
+            
             const html = marked.parse(contentWithoutFrontMatter);
             
             // Create front matter header
@@ -467,6 +478,9 @@ class GitKataViewer {
             
             // Apply dialogue styling
             this.applyDialogueStyling(viewer);
+            
+            // Initialize knowledge check interactions
+            this.knowledgeCheck.initializeEventListeners(viewer);
             
         } catch (error) {
             viewer.innerHTML = `

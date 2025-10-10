@@ -18,6 +18,40 @@ estimated_time: 25
 ninja_belt: "white"
 ---
 
+## Pre-Dialog Knowledge Check
+
+Before beginning your journey with Sensei, test your understanding of Java generics fundamentals:
+
+### Question 1: What is the primary benefit of using Java generics?
+
+a) Faster program execution
+b) Reduced memory usage
+c) Compile-time type safety and elimination of casting
+d) Automatic garbage collection
+
+### Question 2: In the generic class declaration `class Box<T>`, what does `T` represent?
+
+a) A concrete type like String or Integer
+b) A type parameter that will be replaced with an actual type
+c) A method name
+d) A variable name
+
+### Question 3: What happens when you try to compile this code with generics?
+
+```java
+Box<String> box = new Box<>();
+box.setItem(42); // Trying to put Integer in String box
+```
+
+a) Runtime ClassCastException
+b) The program runs but with warnings
+c)  Compile-time error preventing the mistake
+d) Automatic type conversion to String
+
+> Answers : 1:c;2:b;3:c
+
+---
+
 *Sensei:* Welcome, young developer. Today we begin our journey into the mystical art of Java Generics. Like a craftsman who chooses the right tool for each task, generics help us write type-safe and reusable code.
 
 *Deshi:* Sensei, I've heard that generics are complex. Are they really necessary?
@@ -51,8 +85,8 @@ classDiagram
     }
     
     Client --> UnsafeBox : uses
-    
-    note for UnsafeBox "Requires casting\nRuntime type errors\nNo compile-time safety"
+
+    note for UnsafeBox "Requires casting\nRuntime type errors\\nNo compile-time safety"
 ```
 
 *Sensei:* The current `UnsafeBox` class stores everything as `Object`. This leads to three problems:
@@ -200,6 +234,7 @@ classDiagram
 *Deshi:* What does the `T` stand for?
 
 *Sensei:* `T` is convention for "Type". You could use any name, but follow these conventions:
+
 - `T` - Type (general purpose)
 - `E` - Element (collections)
 - `K` - Key (maps)
@@ -215,6 +250,35 @@ mvn test -Dtest=UnsafeBoxTest
 ```
 
 The tests will guide you through the transformation from unsafe to type-safe code.
+
+## Post-Kata Knowledge Check
+
+Now that you've completed the kata, test your understanding of the concepts you've learned:
+
+### Question 1: What is the main advantage of using `Box<String>` instead of `UnsafeBox`?
+
+a) It uses less memory
+b) It runs faster at runtime
+c) It prevents ClassCastException by catching type errors at compile time
+d) It automatically converts types
+
+### Question 2: In the generic method `<T> T findFirst(T[] array)`, what does the first `<T>` represent?
+
+a) The return type of the method
+b) The type parameter declaration for the method
+c) A constraint on the input array
+d) A Java keyword for generics
+
+### Question 3: If you create `Pair<String, Integer> nameAge = new Pair<>("Alice", 25)`, what type does `nameAge.getSecond()` return?
+
+a) Object (requires casting)
+b) String
+c) Integer
+d) Number
+
+> Answers : 1:c;2:b;3:c
+
+---
 
 ## Reflection Questions
 
@@ -232,6 +296,7 @@ The tests will guide you through the transformation from unsafe to type-safe cod
 ## Next Steps
 
 Once you master these basics, you'll be ready for:
+
 - Bounded type parameters (`<T extends Number>`)
 - Wildcards (`<? extends T>`, `<? super T>`)
 - Generic inheritance and complex type relationships

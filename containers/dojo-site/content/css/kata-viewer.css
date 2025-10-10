@@ -1023,3 +1023,267 @@ pre code {
 .prism-line-number::-moz-selection {
     background: transparent;
 }
+
+/* Knowledge Check Styles */
+.knowledge-check-container {
+    background: rgba(15, 15, 15, 0.8);
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    box-shadow: 0 8px 32px rgba(35, 34, 33, 0.4);
+}
+
+.knowledge-question {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.knowledge-question:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.question-title {
+    color: #ffd700;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.question-additional-content {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(20, 20, 20, 0.5);
+    border-radius: 6px;
+    border-left: 3px solid rgba(255, 215, 0, 0.4);
+}
+
+.question-additional-content pre.knowledge-code-block {
+    margin: 8px 0;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 6px;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    padding: 0;
+}
+
+.question-additional-content code {
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.9rem;
+    padding: 0;
+    background: transparent;
+}
+
+/* Knowledge check code block styling */
+.knowledge-code-block .prism-line {
+    display: flex;
+    align-items: flex-start;
+    min-height: 1.3em;
+    padding: 0 8px;
+    line-height: 1.3;
+}
+
+.knowledge-code-block .prism-line-number {
+    color: rgba(255, 215, 0, 0.4);
+    font-size: 0.8rem;
+    min-width: 30px;
+    text-align: right;
+    margin-right: 12px;
+    padding-top: 1px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.knowledge-code-block .prism-content {
+    flex: 1;
+    color: #e0e0e0;
+    white-space: pre;
+    min-height: 1.3em;
+}
+
+.knowledge-code-block .prism-content:empty::before {
+    content: " ";
+    visibility: hidden;
+}
+
+/* Alternating line background for better readability */
+.knowledge-code-block .prism-line:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Prism token colors for knowledge check code blocks */
+.knowledge-code-block .token.keyword {
+    color: #569cd6;
+}
+
+.knowledge-code-block .token.string {
+    color: #ce9178;
+}
+
+.knowledge-code-block .token.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+
+.knowledge-code-block .token.number {
+    color: #b5cea8;
+}
+
+.knowledge-code-block .token.operator {
+    color: #d4d4d4;
+}
+
+.knowledge-code-block .token.punctuation {
+    color: #d4d4d4;
+}
+
+.knowledge-code-block .token.class-name {
+    color: #4ec9b0;
+}
+
+.knowledge-code-block .token.function {
+    color: #dcdcaa;
+}
+
+.question-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.question-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(25, 25, 25, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.question-option:hover {
+    background: rgba(40, 40, 40, 0.8);
+    border-color: rgba(255, 215, 0, 0.3);
+    transform: translateX(4px);
+}
+
+.option-letter {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1rem;
+    min-width: 24px;
+}
+
+.option-text {
+    color: #e0e0e0;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.option-checkmark {
+    color: #4caf50;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: none;
+    animation: checkmarkAppear 0.3s ease-in-out;
+}
+
+@keyframes checkmarkAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.question-option.selected {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.question-option.correct {
+    border-color: #4caf50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.question-option.correct .option-text {
+    color: #a5d6a7;
+}
+
+.question-option.incorrect {
+    border-color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+    animation: incorrectShake 0.4s ease-in-out;
+}
+
+.question-option.incorrect .option-text {
+    color: #ffcdd2;
+}
+
+@keyframes incorrectShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* Inline code styling within knowledge check questions */
+.knowledge-check-container code.inline-code {
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+    font-weight: 500;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    white-space: nowrap;
+}
+
+.question-title code.inline-code {
+    color: #ffeb3b;
+    background: rgba(255, 235, 59, 0.15);
+    border-color: rgba(255, 235, 59, 0.3);
+}
+
+.option-text code.inline-code {
+    color: #fff3c4;
+    background: rgba(255, 243, 196, 0.1);
+    border-color: rgba(255, 243, 196, 0.2);
+}
+
+/* Mobile responsive design for knowledge checks */
+@media (max-width: 600px) {
+    .knowledge-check-container {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    
+    .question-option {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    
+    .question-title {
+        font-size: 1rem;
+    }
+    
+    .option-text {
+        font-size: 0.9rem;
+    }
+    
+    .knowledge-check-container code.inline-code {
+        font-size: 0.85em;
+        padding: 1px 4px;
+    }
+}
