@@ -270,17 +270,16 @@ class GitKataViewer {
         // Format duration
         const duration = data.duration || (data.estimated_time ? `${data.estimated_time} minutes` : 'Unknown duration');
         
-        // Get ninja icon
-        const ninjaIcon = this.getNinjaIcon(data.level || data.difficulty || 'beginner');
-        const level = (data.level || data.difficulty || 'beginner');
+        // Get level information
+        const level = (data.level || data.difficulty || 'beginner').toLowerCase();
         const levelCapitalized = level.charAt(0).toUpperCase() + level.slice(1);
+        const ninjaIcon = this.getNinjaIcon(level);
         
         return `
             <div class="front-matter-header">
                 <div class="fm-title-section">
                     <h1 class="fm-title">${data.title || 'Untitled Kata'}</h1>
-                    <div class="fm-ninja-level">
-                        <img src="images/${ninjaIcon}" alt="${level} ninja" class="fm-ninja-icon" />
+                    <div class="fm-level-badge level-${level}">
                         <span class="fm-level-text">${levelCapitalized} Level</span>
                     </div>
                 </div>
@@ -288,8 +287,13 @@ class GitKataViewer {
                 ${data.goal ? `
                     <div class="fm-goal-section">
                         <div class="fm-goal-card">
-                            <div class="fm-goal-sensei">
-                                <img src="images/sensei.png" alt="Sensei" class="fm-sensei-icon" />
+                            <div class="fm-characters-dojo">
+                                <div class="fm-ninja-container">
+                                    <img src="images/${ninjaIcon}" alt="${levelCapitalized} Level Ninja" class="fm-character-icon fm-ninja-icon" title="${levelCapitalized} Level" />                                    
+                                </div>
+                                <div class="fm-sensei-container">
+                                    <img src="images/sensei.png" alt="Sensei" class="fm-character-icon fm-sensei-icon" />                                    
+                                </div>
                             </div>
                             <div class="fm-meta-label">Goal</div>
                             <div class="fm-meta-value">${data.goal}</div>
@@ -382,26 +386,24 @@ class GitKataViewer {
                 const li = document.createElement('li');
                 li.className = `kata-item kata-${kata.category.toLowerCase()} kata-level-${(kata.level || kata.difficulty || 'beginner').toLowerCase()}`;
                 li.dataset.index = kata.originalIndex;
-                const ninjaIcon = this.getNinjaIcon(kata.level || kata.difficulty || 'beginner');
                 
                 // Format duration
                 const duration = kata.duration || kata.estimated_time ? 
                     (kata.duration || `${kata.estimated_time} min`) : 
                     'Unknown duration';
                 
+                const level = (kata.level || kata.difficulty || 'beginner').toLowerCase();
+                const levelCapitalized = level.charAt(0).toUpperCase() + level.slice(1);
+                
                 li.innerHTML = `
                     <div class="kata-content">
-                        <div class="kata-header">
-                            <div class="kata-category">${kata.category}</div>
-                        </div>
                         <div class="kata-title">${kata.title || 'Untitled Kata'}</div>
                         <div class="kata-subject">${kata.subject || kata.goal || 'No description available'}</div>
                         <div class="kata-meta">
-                            <span class="kata-level">${(kata.level || kata.difficulty || 'Beginner').charAt(0).toUpperCase() + (kata.level || kata.difficulty || 'beginner').slice(1)}</span>
+                            <span class="kata-level level-${level}">${levelCapitalized}</span>
                             <span class="duration">${duration}</span>
                         </div>
                     </div>
-                    <img src="images/${ninjaIcon}" alt="${kata.level || kata.difficulty || 'beginner'} ninja" class="ninja-icon" title="${(kata.level || kata.difficulty || 'Beginner').charAt(0).toUpperCase() + (kata.level || kata.difficulty || 'beginner').slice(1)} Level" />
                 `;
                 kataList.appendChild(li);
             });

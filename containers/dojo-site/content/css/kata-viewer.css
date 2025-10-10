@@ -114,8 +114,8 @@ body {
 
 .kata-content {
     flex: 1;
-    padding: 12px;
-    padding-right: 60px; /* Space for ninja icon */
+    padding: 12px;    
+    text-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.9);
 }
 
 /* Default active behavior - will be overridden by category-specific styles */
@@ -240,6 +240,26 @@ body {
 
 .kata-level {
     font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Level-specific colors for sidebar */
+.kata-level.level-beginner {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32) !important;
+}
+
+.kata-level.level-intermediate {
+    background: linear-gradient(135deg, #FF9800, #E65100) !important;
+}
+
+.kata-level.level-advanced {
+    background: linear-gradient(135deg, #F44336, #B71C1C) !important;
 }
 
 .duration {
@@ -440,7 +460,9 @@ body {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    opacity: 0.9;
+    border-radius: 80%;
+    border: solid black 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Dialogue Content Container */
@@ -625,29 +647,45 @@ body {
     flex: 1;
 }
 
-.fm-ninja-level {
+/* Level badge styling - replaces ninja-level */
+.fm-level-badge {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.3);
+    justify-content: center;
     padding: 8px 16px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background: rgba(128, 128, 128, 0.3); /* Default gray background */
 }
 
-.fm-ninja-icon {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+/* Level-specific background colors with higher specificity */
+.front-matter-header .fm-level-badge.level-beginner,
+.fm-level-badge.level-beginner {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32) !important;
+    border-color: rgba(76, 175, 80, 0.5) !important;
+}
+
+.front-matter-header .fm-level-badge.level-intermediate,
+.fm-level-badge.level-intermediate {
+    background: linear-gradient(135deg, #FF9800, #E65100) !important;
+    border-color: rgba(255, 152, 0, 0.5) !important;
+}
+
+.front-matter-header .fm-level-badge.level-advanced,
+.fm-level-badge.level-advanced {
+    background: linear-gradient(135deg, #F44336, #B71C1C) !important;
+    border-color: rgba(244, 67, 54, 0.5) !important;
 }
 
 .fm-level-text {
     font-weight: bold;
-    color: #ffd700;
+    color: #ffffff;
     font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* Full-width Goal Section */
@@ -719,18 +757,58 @@ body {
     padding: 8px 0;
 }
 
-.fm-sensei-icon {
+/* Characters dojo display - side by side */
+.fm-characters-dojo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.fm-ninja-container,
+.fm-sensei-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.fm-character-icon {
     width: 128px;
-    height: auto;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+    height: 128px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
     transition: all 0.3s ease;
     opacity: 0.9;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.fm-character-icon:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.9));
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.fm-ninja-icon:hover {
+    transform: scale(1.2);
 }
 
 .fm-sensei-icon:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.8));
-    opacity: 1;
+    transform: scale(1.2);
+}
+
+.fm-character-label {
+    font-size: 0.9rem;
+    color: #ffd700;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .fm-category-abstraction {
@@ -900,7 +978,7 @@ body {
         font-size: 1.8rem;
     }
     
-    .fm-ninja-level {
+    .fm-level-badge {
         align-self: flex-end;
     }
     
@@ -922,9 +1000,19 @@ body {
         font-size: 1.1rem;
     }
     
-    /* Mobile sensei icon in goal card */
-    .fm-sensei-icon {
-        width: 28px;
+    /* Mobile characters in goal card */
+    .fm-characters-dojo {
+        gap: 20px;
+    }
+    
+    .fm-character-icon {
+        width: 60px;
+        height: 60px;
+        padding: 6px;
+    }
+    
+    .fm-character-label {
+        font-size: 0.8rem;
     }
 }
 
